@@ -1,0 +1,56 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model DataSource {
+  id        String   @id @default(cuid())
+  name      String
+  type      String
+  host      String?
+  port      Int?
+  database  String?
+  username  String?
+  password  String?
+  filename  String?
+  apiUrl    String?
+  metadata  String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  savedQueries SavedQuery[]
+}
+
+model SavedQuery {
+  id           String     @id @default(cuid())
+  name         String?
+  sql          String
+  dataSourceId String
+  dataSource   DataSource @relation(fields: [dataSourceId], references: [id], onDelete: Cascade)
+  createdAt    DateTime   @default(now())
+}
+
+model Dashboard {
+  id        String   @id @default(cuid())
+  name      String
+  widgets   String   @default("[]")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model SavedDataset {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  columns     String   // JSON: string[]
+  rows        String   // JSON: unknown[][]
+  rowCount    Int      @default(0)
+  sourceId    String?  // original DataSource id
+  sourceQuery String?  // original SQL for refresh
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
