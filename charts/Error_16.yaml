@@ -1,0 +1,56 @@
+slice_name: Error
+description: null
+certified_by: null
+certification_details: null
+viz_type: big_number_total
+params:
+  datasource: 17__table
+  viz_type: big_number_total
+  slice_id: 16
+  metric:
+    aggregate: AVG
+    column:
+      advanced_data_type: null
+      changed_on: '2024-12-26T17:54:09.405070'
+      column_name: error_rate
+      created_on: '2024-12-26T17:54:09.405066'
+      description: null
+      expression: null
+      extra: '{"warning_markdown":null}'
+      filterable: true
+      groupby: true
+      id: 81
+      is_active: true
+      is_dttm: false
+      python_date_format: null
+      type: DECIMAL
+      type_generic: 0
+      uuid: 5a34f9e0-f058-4cd0-b5ec-b7504f47206f
+      verbose_name: null
+    datasourceWarning: false
+    expressionType: SIMPLE
+    hasCustomLabel: false
+    label: AVG(error_rate)
+    optionName: metric_s583p8xyffb_o72brj4dzys
+    sqlExpression: null
+  adhoc_filters:
+  - clause: WHERE
+    comparator: No filter
+    expressionType: SIMPLE
+    operator: TEMPORAL_RANGE
+    subject: time
+  header_font_size: 0.4
+  subheader_font_size: 0.15
+  y_axis_format: .2%
+  time_format: smart_date
+  conditional_formatting: []
+  extra_form_data: {}
+  dashboards:
+  - 1
+query_context: '{"datasource":{"id":17,"type":"table"},"force":false,"queries":[{"filters":[{"col":"time","op":"TEMPORAL_RANGE","val":"No
+  filter"}],"extras":{"having":"","where":""},"applied_time_extras":{},"columns":[],"metrics":[{"aggregate":"AVG","column":{"advanced_data_type":null,"changed_on":"2024-12-26T17:54:09.405070","column_name":"error_rate","created_on":"2024-12-26T17:54:09.405066","description":null,"expression":null,"extra":"{\"warning_markdown\":null}","filterable":true,"groupby":true,"id":81,"is_active":true,"is_dttm":false,"python_date_format":null,"type":"DECIMAL","type_generic":0,"uuid":"5a34f9e0-f058-4cd0-b5ec-b7504f47206f","verbose_name":null},"datasourceWarning":false,"expressionType":"SIMPLE","hasCustomLabel":false,"label":"AVG(error_rate)","optionName":"metric_s583p8xyffb_o72brj4dzys","sqlExpression":null}],"annotation_layers":[],"series_limit":0,"order_desc":true,"url_params":{},"custom_params":{},"custom_form_data":{}}],"form_data":{"datasource":"17__table","viz_type":"big_number_total","slice_id":16,"metric":{"aggregate":"AVG","column":{"advanced_data_type":null,"changed_on":"2024-12-26T17:54:09.405070","column_name":"error_rate","created_on":"2024-12-26T17:54:09.405066","description":null,"expression":null,"extra":"{\"warning_markdown\":null}","filterable":true,"groupby":true,"id":81,"is_active":true,"is_dttm":false,"python_date_format":null,"type":"DECIMAL","type_generic":0,"uuid":"5a34f9e0-f058-4cd0-b5ec-b7504f47206f","verbose_name":null},"datasourceWarning":false,"expressionType":"SIMPLE","hasCustomLabel":false,"label":"AVG(error_rate)","optionName":"metric_s583p8xyffb_o72brj4dzys","sqlExpression":null},"adhoc_filters":[{"clause":"WHERE","comparator":"No
+  filter","expressionType":"SIMPLE","operator":"TEMPORAL_RANGE","subject":"time"}],"header_font_size":0.4,"subheader_font_size":0.15,"y_axis_format":".2%","time_format":"smart_date","conditional_formatting":[],"extra_form_data":{},"dashboards":[1],"force":false,"result_format":"json","result_type":"full"},"result_format":"json","result_type":"full"}'
+cache_timeout: null
+uuid: b29eafb5-969f-4ddf-bbf1-8fe6a0bd34f0
+version: 1.0.0
+dataset_uuid: 5058f553-a491-4dc4-ae5f-05d7309c0282

@@ -1,0 +1,65 @@
+slice_name: Usuarios
+description: null
+certified_by: null
+certification_details: null
+viz_type: big_number_total
+params:
+  datasource: 1__table
+  viz_type: big_number_total
+  slice_id: 1
+  metric:
+    aggregate: MAX
+    column:
+      advanced_data_type: null
+      changed_on: '2024-12-19T12:38:26.355290'
+      column_name: active_users
+      created_on: '2024-12-19T12:38:26.355286'
+      description: null
+      expression: null
+      extra: '{"warning_markdown":null}'
+      filterable: true
+      groupby: true
+      id: 4
+      is_active: true
+      is_dttm: false
+      python_date_format: null
+      type: DECIMAL
+      type_generic: 0
+      uuid: 7c35ae33-c033-40c4-b7a4-779d3fcf60a8
+      verbose_name: null
+    datasourceWarning: false
+    expressionType: SIMPLE
+    hasCustomLabel: false
+    label: MAX(active_users)
+    optionName: metric_9ggs971l6ht_723yziwq0z
+    sqlExpression: null
+  adhoc_filters:
+  - clause: WHERE
+    comparator: No filter
+    expressionType: SIMPLE
+    operator: TEMPORAL_RANGE
+    subject: time_interval
+  header_font_size: 0.4
+  subheader_font_size: 0.125
+  y_axis_format: ~g
+  time_format: smart_date
+  conditional_formatting: []
+  extra_form_data: {}
+  dashboards:
+  - 1
+  - 2
+  - 3
+  - 4
+  - 5
+  - 6
+  - 7
+  - 8
+  - 9
+  - 10
+query_context: '{"datasource":{"id":1,"type":"table"},"force":false,"queries":[{"filters":[{"col":"time_interval","op":"TEMPORAL_RANGE","val":"No
+  filter"}],"extras":{"having":"","where":""},"applied_time_extras":{},"columns":[],"metrics":[{"aggregate":"MAX","column":{"advanced_data_type":null,"changed_on":"2024-12-19T12:38:26.355290","column_name":"active_users","created_on":"2024-12-19T12:38:26.355286","description":null,"expression":null,"extra":"{\"warning_markdown\":null}","filterable":true,"groupby":true,"id":4,"is_active":true,"is_dttm":false,"python_date_format":null,"type":"DECIMAL","type_generic":0,"uuid":"7c35ae33-c033-40c4-b7a4-779d3fcf60a8","verbose_name":null},"datasourceWarning":false,"expressionType":"SIMPLE","hasCustomLabel":false,"label":"MAX(active_users)","optionName":"metric_9ggs971l6ht_723yziwq0z","sqlExpression":null}],"annotation_layers":[],"series_limit":0,"order_desc":true,"url_params":{},"custom_params":{},"custom_form_data":{}}],"form_data":{"datasource":"1__table","viz_type":"big_number_total","slice_id":1,"metric":{"aggregate":"MAX","column":{"advanced_data_type":null,"changed_on":"2024-12-19T12:38:26.355290","column_name":"active_users","created_on":"2024-12-19T12:38:26.355286","description":null,"expression":null,"extra":"{\"warning_markdown\":null}","filterable":true,"groupby":true,"id":4,"is_active":true,"is_dttm":false,"python_date_format":null,"type":"DECIMAL","type_generic":0,"uuid":"7c35ae33-c033-40c4-b7a4-779d3fcf60a8","verbose_name":null},"datasourceWarning":false,"expressionType":"SIMPLE","hasCustomLabel":false,"label":"MAX(active_users)","optionName":"metric_9ggs971l6ht_723yziwq0z","sqlExpression":null},"adhoc_filters":[{"clause":"WHERE","comparator":"No
+  filter","expressionType":"SIMPLE","operator":"TEMPORAL_RANGE","subject":"time_interval"}],"header_font_size":0.2,"subheader_font_size":0.125,"y_axis_format":"~g","time_format":"smart_date","conditional_formatting":[],"extra_form_data":{},"dashboards":[1,2,3,4,5,6,7,8,9,10],"force":false,"result_format":"json","result_type":"full"},"result_format":"json","result_type":"full"}'
+cache_timeout: null
+uuid: a36c4616-1182-4553-910e-67f753ab76c1
+version: 1.0.0
+dataset_uuid: bfbe2bd0-7c67-48da-ad70-366371a25611

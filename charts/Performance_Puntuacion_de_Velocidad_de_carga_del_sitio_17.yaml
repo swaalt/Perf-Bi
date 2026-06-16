@@ -1,0 +1,130 @@
+slice_name: "Performance (Puntuaci\xF3n de Velocidad de carga del sitio)"
+description: null
+certified_by: null
+certification_details: null
+viz_type: echarts_timeseries_line
+params:
+  datasource: 19__table
+  viz_type: echarts_timeseries_line
+  slice_id: 17
+  x_axis: time
+  time_grain_sqla: PT1S
+  metrics:
+  - aggregate: AVG
+    column:
+      advanced_data_type: null
+      changed_on: '2025-01-14T15:15:51.008666'
+      column_name: performance
+      created_on: '2025-01-14T15:15:51.008661'
+      description: null
+      expression: null
+      extra: '{"warning_markdown":null}'
+      filterable: true
+      groupby: true
+      id: 99
+      is_active: true
+      is_dttm: false
+      python_date_format: null
+      type: FLOAT
+      type_generic: 0
+      uuid: e6ba7ddf-45e2-4fae-bced-2c42d7a004cf
+      verbose_name: null
+    datasourceWarning: false
+    expressionType: SIMPLE
+    hasCustomLabel: false
+    label: AVG(performance)
+    optionName: metric_wolt97n6t2f_gbukf0xmcfk
+    sqlExpression: null
+  groupby: []
+  adhoc_filters:
+  - clause: WHERE
+    comparator: No filter
+    expressionType: SIMPLE
+    operator: TEMPORAL_RANGE
+    subject: time
+  row_limit: 1000
+  truncate_metric: true
+  show_empty_columns: true
+  comparison_type: values
+  annotation_layers: []
+  forecastPeriods: 10
+  forecastInterval: 0.8
+  x_axis_title: ''
+  x_axis_title_margin: 15
+  y_axis_title: ' '
+  y_axis_title_margin: 15
+  y_axis_title_position: Left
+  sort_series_type: sum
+  sort_series_ascending: false
+  color_scheme: supersetColors
+  seriesType: line
+  show_value: true
+  only_total: true
+  opacity: 0.2
+  markerSize: 6
+  show_legend: true
+  legendType: scroll
+  legendOrientation: top
+  x_axis_time_format: smart_date
+  rich_tooltip: true
+  tooltipTimeFormat: smart_date
+  y_axis_format: SMART_NUMBER
+  truncateXAxis: true
+  y_axis_bounds:
+  - null
+  - null
+  extra_form_data: {}
+  dashboards:
+  - 1
+  - 2
+  - 3
+  - 5
+  - 6
+  - 7
+  - 8
+  - 9
+  - 10
+  - 11
+  - 12
+  - 13
+  - 15
+  - 16
+  - 17
+  - 18
+  - 19
+  - 20
+  - 21
+  - 22
+  - 23
+  - 24
+  - 25
+  - 26
+  - 27
+  - 28
+  - 29
+  - 30
+  - 31
+  - 32
+  - 33
+  - 34
+  - 35
+  - 36
+  - 37
+  - 38
+  - 39
+  - 40
+  - 41
+  - 42
+  - 43
+  - 44
+  - 45
+  - 46
+  - 47
+query_context: '{"datasource":{"id":19,"type":"table"},"force":false,"queries":[{"filters":[{"col":"time","op":"TEMPORAL_RANGE","val":"No
+  filter"}],"extras":{"time_grain_sqla":"PT1S","having":"","where":""},"applied_time_extras":{},"columns":[{"timeGrain":"PT1S","columnType":"BASE_AXIS","sqlExpression":"time","label":"time","expressionType":"SQL"}],"metrics":[{"aggregate":"AVG","column":{"advanced_data_type":null,"changed_on":"2025-01-14T15:15:51.008666","column_name":"performance","created_on":"2025-01-14T15:15:51.008661","description":null,"expression":null,"extra":"{\"warning_markdown\":null}","filterable":true,"groupby":true,"id":99,"is_active":true,"is_dttm":false,"python_date_format":null,"type":"FLOAT","type_generic":0,"uuid":"e6ba7ddf-45e2-4fae-bced-2c42d7a004cf","verbose_name":null},"datasourceWarning":false,"expressionType":"SIMPLE","hasCustomLabel":false,"label":"AVG(performance)","optionName":"metric_wolt97n6t2f_gbukf0xmcfk","sqlExpression":null}],"orderby":[[{"aggregate":"AVG","column":{"advanced_data_type":null,"changed_on":"2025-01-14T15:15:51.008666","column_name":"performance","created_on":"2025-01-14T15:15:51.008661","description":null,"expression":null,"extra":"{\"warning_markdown\":null}","filterable":true,"groupby":true,"id":99,"is_active":true,"is_dttm":false,"python_date_format":null,"type":"FLOAT","type_generic":0,"uuid":"e6ba7ddf-45e2-4fae-bced-2c42d7a004cf","verbose_name":null},"datasourceWarning":false,"expressionType":"SIMPLE","hasCustomLabel":false,"label":"AVG(performance)","optionName":"metric_wolt97n6t2f_gbukf0xmcfk","sqlExpression":null},false]],"annotation_layers":[],"row_limit":1000,"series_columns":[],"series_limit":0,"order_desc":true,"url_params":{},"custom_params":{},"custom_form_data":{},"time_offsets":[],"post_processing":[{"operation":"pivot","options":{"index":["time"],"columns":[],"aggregates":{"AVG(performance)":{"operator":"mean"}},"drop_missing_columns":false}},{"operation":"flatten"}]}],"form_data":{"datasource":"19__table","viz_type":"echarts_timeseries_line","slice_id":17,"x_axis":"time","time_grain_sqla":"PT1S","metrics":[{"aggregate":"AVG","column":{"advanced_data_type":null,"changed_on":"2025-01-14T15:15:51.008666","column_name":"performance","created_on":"2025-01-14T15:15:51.008661","description":null,"expression":null,"extra":"{\"warning_markdown\":null}","filterable":true,"groupby":true,"id":99,"is_active":true,"is_dttm":false,"python_date_format":null,"type":"FLOAT","type_generic":0,"uuid":"e6ba7ddf-45e2-4fae-bced-2c42d7a004cf","verbose_name":null},"datasourceWarning":false,"expressionType":"SIMPLE","hasCustomLabel":false,"label":"AVG(performance)","optionName":"metric_wolt97n6t2f_gbukf0xmcfk","sqlExpression":null}],"groupby":[],"adhoc_filters":[{"clause":"WHERE","comparator":"No
+  filter","expressionType":"SIMPLE","operator":"TEMPORAL_RANGE","subject":"time"}],"row_limit":1000,"truncate_metric":true,"show_empty_columns":true,"comparison_type":"values","annotation_layers":[],"forecastPeriods":10,"forecastInterval":0.8,"x_axis_title":"","x_axis_title_margin":15,"y_axis_title":"
+  ","y_axis_title_margin":15,"y_axis_title_position":"Left","sort_series_type":"sum","sort_series_ascending":false,"color_scheme":"supersetColors","seriesType":"line","show_value":true,"only_total":true,"opacity":0.2,"markerSize":6,"show_legend":true,"legendType":"scroll","legendOrientation":"top","x_axis_time_format":"smart_date","rich_tooltip":true,"tooltipTimeFormat":"smart_date","y_axis_format":"SMART_NUMBER","truncateXAxis":true,"y_axis_bounds":[null,null],"extra_form_data":{},"dashboards":[1,2,3,5,6,7,8,9,10,11,12,13,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47],"force":false,"result_format":"json","result_type":"full"},"result_format":"json","result_type":"full"}'
+cache_timeout: null
+uuid: c178c631-c5f8-4c6f-8f9b-11e9a814c617
+version: 1.0.0
+dataset_uuid: 5a3d2ddc-22c2-4fb2-9aa3-be86c7deaebf

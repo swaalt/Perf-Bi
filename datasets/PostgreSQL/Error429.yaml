@@ -1,0 +1,102 @@
+table_name: Error429
+main_dttm_col: time
+description: null
+default_endpoint: null
+offset: 0
+cache_timeout: null
+catalog: postgres
+schema: public
+sql: "WITH filtered_429 AS (\r\n    SELECT\r\n        time_bucket('5 seconds', \"\
+  time\" AT TIME ZONE 'America/Santiago') AS time,\r\n        name AS metric,\r\n\
+  \        testplan,\r\n        COUNT(*) AS \"429_errors\"\r\n    FROM request\r\n\
+  \    WHERE\r\n        (\r\n            {% if from_dttm is not none and to_dttm is\
+  \ not none %}\r\n                \"time\" AT TIME ZONE 'America/Santiago' >= '{{\
+  \ from_dttm }}'\r\n                AND \"time\" AT TIME ZONE 'America/Santiago'\
+  \ < '{{ to_dttm }}'\r\n            {% else %}\r\n                1=0\r\n       \
+  \     {% endif %}\r\n        )\r\n        AND\r\n        {% if filter_values('testplan')|length\
+  \ > 0 %}\r\n            testplan IN {{ filter_values('testplan')|where_in }}\r\n\
+  \        {% else %}\r\n            1=0\r\n        {% endif %}\r\n        AND exception\
+  \ IS NOT NULL\r\n        AND (\r\n            exception ILIKE '%429%'\r\n      \
+  \      OR exception ILIKE '%Too Many Requests%'\r\n            OR exception ILIKE\
+  \ '%rate limit%'\r\n        )\r\n    GROUP BY time, name, testplan\r\n),\r\n\r\n\
+  -- \u2592\u2592 STEP 2: Obtener los 7 endpoints con m\xE1s errores \u2592\u2592\r\
+  \ntop7 AS (\r\n    SELECT metric\r\n    FROM filtered_429\r\n    GROUP BY metric\r\
+  \n    ORDER BY SUM(\"429_errors\") DESC\r\n    LIMIT 7\r\n)\r\n\r\n-- \u2592\u2592\
+  \ STEP 3: Mostrar solo los top 7 en el timeseries \u2592\u2592\r\nSELECT\r\n   \
+  \ f.time,\r\n    f.metric,\r\n    f.testplan,\r\n    SUM(f.\"429_errors\") AS \"\
+  429_errors\"\r\nFROM filtered_429 f\r\nJOIN top7 t ON f.metric = t.metric\r\nGROUP\
+  \ BY f.time, f.metric, f.testplan\r\nORDER BY f.time;\r\n"
+params: null
+template_params: null
+filter_select_enabled: true
+fetch_values_predicate: null
+extra: null
+normalize_columns: false
+always_filter_main_dttm: false
+uuid: 64a474f2-b9ac-4a3f-934a-d59a9cb7ff14
+metrics:
+- metric_name: count
+  verbose_name: COUNT(*)
+  metric_type: count
+  expression: COUNT(*)
+  description: null
+  d3format: null
+  currency: null
+  extra:
+    warning_markdown: ''
+  warning_text: null
+columns:
+- column_name: 429_errors
+  verbose_name: null
+  is_dttm: false
+  is_active: true
+  type: LONGINTEGER
+  advanced_data_type: null
+  groupby: true
+  filterable: true
+  expression: null
+  description: null
+  python_date_format: null
+  extra:
+    warning_markdown: null
+- column_name: time
+  verbose_name: null
+  is_dttm: true
+  is_active: true
+  type: DATETIME
+  advanced_data_type: null
+  groupby: true
+  filterable: true
+  expression: null
+  description: null
+  python_date_format: null
+  extra:
+    warning_markdown: null
+- column_name: testplan
+  verbose_name: null
+  is_dttm: false
+  is_active: true
+  type: STRING
+  advanced_data_type: null
+  groupby: true
+  filterable: true
+  expression: null
+  description: null
+  python_date_format: null
+  extra:
+    warning_markdown: null
+- column_name: metric
+  verbose_name: null
+  is_dttm: false
+  is_active: true
+  type: STRING
+  advanced_data_type: null
+  groupby: true
+  filterable: true
+  expression: null
+  description: null
+  python_date_format: null
+  extra:
+    warning_markdown: null
+version: 1.0.0
+database_uuid: f2bcce67-057a-4a17-ab16-c53d1602290b

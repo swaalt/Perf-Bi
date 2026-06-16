@@ -1,0 +1,1345 @@
+dashboard_title: TEMPLATE-DASHBOARD-3 (NAV)
+description: null
+css: "\n@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap');\n\
+  \n:root {\n  --pink: #e8136b;\n  --purple: #5c3d82;\n  --pd: #3f2a5c;\n  --bg: #ffffff;\n\
+  \  --card: #ffffff;\n  --border: #eae6f1;\n  --border-focus: #d8d0e8;\n  --text:\
+  \ #1a1a2e;\n  --text2: #55556e;\n  --muted: #9494ad;\n  --shadow: 0 1px 4px rgba(50,30,80,.06);\n\
+  \  --shadow-hover: 0 4px 16px rgba(50,30,80,.09);\n  --r: 14px;\n}\n\n/* \u2500\u2500\
+  \ FONT \u2500\u2500 */\nbody,h1,h2,h3,h4,h5,p,div,span,th,td,li,.editable-title\
+  \ {\n  font-family:'IBM Plex Sans',-apple-system,system-ui,sans-serif !important;\n\
+  }\n\n/* \u2500\u2500 FONDO BLANCO LIMPIO \u2500\u2500 */\nbody,\n.dashboard,\n.dashboard-content,\n\
+  .grid-column,\n.grid-row,\n.dragdroppable-content,\n.dragdroppable-column {\n  background-color:\
+  \ var(--bg) !important;\n}\n.dashboard-component { padding:0 !important; }\n#GRID_ID\
+  \ { margin:24px 38px 0 38px !important; }\n\n/* \u2500\u2500 HEADER \u2500\u2500\
+  \ */\n.dashboard-header {\n  background:linear-gradient(135deg,var(--pd) 0%,var(--purple)\
+  \ 60%,#7b5ba0 100%) !important;\n  border-bottom:none !important;\n  box-shadow:0\
+  \ 2px 12px rgba(63,42,92,.18) !important;\n}\n.editable-title,.editable-title input\
+  \ {\n  color:#fff !important; font-weight:700 !important; font-size:16px !important;\n\
+  }\n\n/* \u2500\u2500 CARDS \u2500\u2500 */\n.chart-container,.slice-container {\n\
+  \  background:var(--card) !important;\n  border:1px solid var(--border) !important;\n\
+  \  border-radius:var(--r) !important;\n  box-shadow:var(--shadow) !important;\n\
+  \  transition:box-shadow .2s, border-color .2s !important;\n}\n.chart-container:hover\
+  \ {\n  box-shadow:var(--shadow-hover) !important;\n  border-color:var(--border-focus)\
+  \ !important;\n}\n\n/* \u2500\u2500 CHART TITLES \u2500\u2500 */\n.header-title,.header-title\
+  \ span,.header-title a,\n.css-159ymuc,.css-159ymuc span,\n.dashboard-chart-title,.chart-header\
+  \ .title {\n  color:var(--purple) !important; fill:var(--purple) !important;\n \
+  \ font-weight:700 !important; text-transform:uppercase !important;\n  letter-spacing:.6px\
+  \ !important; font-size:11px !important; white-space: nowrap !important;\n}\n\n\
+  /* \u2500\u2500 SVG AXES \u2500\u2500 */\nsvg text,text[text-anchor='start'],text[text-anchor='middle'],text[text-anchor='end']\
+  \ {\n  fill:var(--muted) !important;\n}\n\n/* \u2550\u2550\u2550 KPI \u2014 USUARIOS\
+  \ CONCURRENTES \u2550\u2550\u2550 */\n.dashboard-chart-id-1 .chart-container {\n\
+  \  background:var(--card) !important;\n  border:1px solid var(--border) !important;\n\
+  \  border-left:3px solid var(--purple) !important;\n  box-shadow:var(--shadow) !important;\n\
+  }\n.dashboard-chart-id-1 [data-test-viz-type='big_number_total'] .header-line {\n\
+  \  color:var(--purple) !important; font-weight:800 !important;\n}\n\n/* \u2550\u2550\
+  \u2550 KPI \u2014 FAILED REQUESTS \u2550\u2550\u2550 */\n.dashboard-chart-id-2 .chart-container\
+  \ { border-left:3px solid var(--pink) !important; }\n.dashboard-chart-id-2 [data-test-viz-type='big_number_total']\
+  \ .header-line {\n  color:var(--pink) !important; font-weight:800 !important;\n\
+  }\n\n/* \u2550\u2550\u2550 KPI \u2014 TOTAL REQUESTS \u2550\u2550\u2550 */\n.dashboard-chart-id-3\
+  \ .chart-container { border-left:3px solid var(--purple) !important; }\n.dashboard-chart-id-3\
+  \ [data-test-viz-type='big_number_total'] .header-line {\n  color:var(--purple)\
+  \ !important; font-weight:800 !important;\n}\n\n/* \u2550\u2550\u2550 KPI \u2014\
+  \ ERROR RATE \u2550\u2550\u2550 */\n.dashboard-chart-id-16 .chart-container { border-left:3px\
+  \ solid var(--pink) !important; }\n.dashboard-chart-id-16 [data-test-viz-type='big_number_total']\
+  \ .header-line {\n  color:var(--pink) !important; font-weight:800 !important;\n\
+  }\n\n/* \u2550\u2550\u2550 KPI \u2014 PEAK OC \u2550\u2550\u2550 */\n.dashboard-chart-id-24\
+  \ .chart-container { border-left:3px solid #0d9f6e !important; }\n\n/* \u2550\u2550\
+  \u2550 SECTION HEADERS \u2550\u2550\u2550 */\n#user-content-general-view,\n#user-content-error-view,\n\
+  #user-content-distribution-view,\n#user-content-lighthouse-view,\n#user-content-tps-view\
+  \ {\n  background:linear-gradient(135deg,var(--pd) 0%,var(--purple) 100%) !important;\n\
+  \  border-radius:10px !important; padding:14px 24px !important;\n  width:100% !important;\
+  \ height:100% !important;\n  box-sizing:border-box !important; display:flex !important;\
+  \ align-items:center !important;\n  box-shadow:0 2px 8px rgba(63,42,92,.12) !important;\n\
+  }\n#user-content-general-view h2,\n#user-content-error-view h2,\n#user-content-distribution-view\
+  \ h2,\n#user-content-lighthouse-view h2,\n#user-content-tps-view h2 {\n  color:#fff\
+  \ !important; font-size:12px !important; font-weight:700 !important;\n  text-transform:uppercase\
+  \ !important; letter-spacing:1.2px !important; margin:0 !important;\n}\n\n/* \u2550\
+  \u2550\u2550 SUMMARY PANEL \u2550\u2550\u2550 */\n#user-content-summary-section\
+  \ {\n  background:linear-gradient(160deg,var(--pd) 0%,#352350 50%,var(--purple)\
+  \ 100%) !important;\n  border-radius:var(--r) !important; padding:22px 20px !important;\n\
+  \  width:100% !important; height:100% !important;\n  box-sizing:border-box !important;\
+  \ overflow-y:auto !important;\n  box-shadow:0 4px 20px rgba(63,42,92,.18) !important;\n\
+  }\n#user-content-summary-container { color:#fff !important; }\n#user-content-summary-container\
+  \ h2 {\n  color:#fff !important; font-size:15px !important; font-weight:700 !important;\n\
+  \  margin:0 0 14px !important; padding-bottom:12px !important;\n  border-bottom:2px\
+  \ solid rgba(232,19,107,.3) !important;\n}\n#user-content-summary-detail,\n#user-content-summary-report,\n\
+  #user-content-summary-section p,\n#user-content-summary-section li,\n#user-content-summary-section\
+  \ ul,\n#user-content-summary-section span,\n#user-content-summary-section div {\n\
+  \  color:rgba(255,255,255,.88) !important;\n  font-size:14px !important;\n}\n#user-content-summary-report\
+  \ {\n  font-size:17px !important; line-height:1.85 !important;\n  white-space:pre-line\
+  \ !important; font-weight:400 !important;\n}\n#user-content-summary-section::-webkit-scrollbar\
+  \ { width:4px; }\n#user-content-summary-section::-webkit-scrollbar-track { background:transparent;\
+  \ }\n#user-content-summary-section::-webkit-scrollbar-thumb { background:rgba(255,255,255,.2);\
+  \ border-radius:2px; }\n\n/* \u2550\u2550\u2550 TRANSPARENT PANEL \u2550\u2550\u2550\
+  \ */\n#user-content-transparent {\n  background:var(--card) !important;\n  border:1px\
+  \ solid var(--border) !important;\n  border-radius:var(--r) !important; padding:18px\
+  \ 22px !important;\n  width:100% !important; height:100% !important;\n  box-sizing:border-box\
+  \ !important; box-shadow:var(--shadow) !important;\n}\n#user-content-transparent\
+  \ h2 {\n  color:var(--pd) !important; font-size:17px !important; font-weight:700\
+  \ !important; margin:0 0 6px !important;\n}\n#user-content-time-dashboard-text {\n\
+  \  color:var(--text2) !important; font-size:12px !important; font-style:italic !important;\
+  \ margin:0 !important;\n}\n\n/* \u2550\u2550\u2550 TABLES \u2550\u2550\u2550 */\n\
+  .dashboard-chart-id-10 th,.dashboard-chart-id-11 th,\n.dashboard-chart-id-12 th,.dashboard-chart-id-13\
+  \ th,\n.dashboard-chart-id-22 th,.dashboard-chart-id-23 th {\n  background:linear-gradient(90deg,var(--pd),var(--purple))\
+  \ !important;\n  color:#fff !important; font-weight:600 !important; font-size:11px\
+  \ !important;\n  letter-spacing:.4px !important; text-transform:uppercase !important;\n\
+  \  border:none !important; padding:10px 14px !important;\n}\n.dashboard-chart-id-10\
+  \ td,.dashboard-chart-id-11 td,\n.dashboard-chart-id-12 td,.dashboard-chart-id-13\
+  \ td {\n  color:var(--text) !important; font-size:12px !important;\n}\n.dashboard-chart-id-10\
+  \ tr:nth-child(even) td,\n.dashboard-chart-id-11 tr:nth-child(even) td,\n.dashboard-chart-id-12\
+  \ tr:nth-child(even) td,\n.dashboard-chart-id-13 tr:nth-child(even) td { background:#faf9fd\
+  \ !important; }\n.dashboard-chart-id-10 tr:hover td,\n.dashboard-chart-id-11 tr:hover\
+  \ td,\n.dashboard-chart-id-12 tr:hover td,\n.dashboard-chart-id-13 tr:hover td {\
+  \ background:#f2eef8 !important; }\n\n/* Hide overflow */\n.dashboard-chart-id-10\
+  \ div[role='presentation'],\n.dashboard-chart-id-11 div[role='presentation'],\n\
+  .dashboard-chart-id-12 div[role='presentation'],\n.dashboard-chart-id-13 div[role='presentation'],\n\
+  .dashboard-chart-id-22 div[role='presentation'],\n.dashboard-chart-id-23 div[role='presentation']\
+  \ { overflow-y:hidden !important; }\n\n/* \u2550\u2550\u2550 SPACING \u2550\u2550\
+  \u2550 */\n.dashboard-chart-id-2,.dashboard-chart-id-3,\n.dashboard-chart-id-4,.dashboard-chart-id-6,\n\
+  .dashboard-chart-id-7,.dashboard-chart-id-8,\n.dashboard-chart-id-9,.dashboard-chart-id-14,\n\
+  .dashboard-chart-id-15,.dashboard-chart-id-22,\n.dashboard-chart-id-23,.dashboard-chart-id-24,\n\
+  .dashboard-chart-id-26 { padding:6px !important; }\n.dashboard-chart-id-10,.dashboard-chart-id-11,\n\
+  .dashboard-chart-id-12,.dashboard-chart-id-13 { padding:8px !important; }\n.dashboard-chart-id-16,.dashboard-chart-id-17\
+  \ { padding:6px !important; }\n\n/* Lighthouse */\n.dashboard-chart-id-17 .chart-container\
+  \ { border-left:3px solid #4a8fe7 !important; }\n\n/* Logo */\n.text-markdown img,.markdown\
+  \ img { max-width:100% !important; height:auto !important; display:block !important;\
+  \ margin:0 auto !important; }\n\n/* Scrollbar */\n::-webkit-scrollbar { width:6px;\
+  \ height:6px; }\n::-webkit-scrollbar-track { background:var(--bg); }\n::-webkit-scrollbar-thumb\
+  \ { background:#c8c0d8; border-radius:3px; }\n::-webkit-scrollbar-thumb:hover {\
+  \ background:var(--purple); }\n\n.grid-row { margin-bottom:2px !important; }\n\n\
+  /* Fix 3-dot menu dropdown */\n.ant-dropdown, .ant-dropdown-menu, .ant-popover {\
+  \ z-index: 99999 !important; }\n\n/* Fix chart-1 padding igual que otros KPIs */\n\
+  .dashboard-chart-id-1 { padding: 6px !important; }\n\n/* TPS Promedio (chart 27)\
+  \ */\n.dashboard-chart-id-27 .chart-container { border-left: 3px solid var(--purple)\
+  \ !important; }\n.dashboard-chart-id-27 [data-test-viz-type='big_number_total']\
+  \ .header-line {\n  color: var(--purple) !important; font-weight: 800 !important;\n\
+  }\n\n/* Cumplimiento General TPS (chart 28) */\n.dashboard-chart-id-28 .chart-container\
+  \ { border-left: 3px solid #0d9f6e !important; }\n.dashboard-chart-id-28 [data-test-viz-type='big_number_total']\
+  \ .header-line {\n  color: #0d9f6e !important; font-weight: 800 !important;\n}\n\
+  \n/* KPI numbers: padding izquierdo en el componente ra\xEDz */\n.dashboard-chart-id-1\
+  \ .superset-legacy-chart-big-number,\n.dashboard-chart-id-2 .superset-legacy-chart-big-number,\n\
+  .dashboard-chart-id-3 .superset-legacy-chart-big-number,\n.dashboard-chart-id-16\
+  \ .superset-legacy-chart-big-number,\n.dashboard-chart-id-24 .superset-legacy-chart-big-number,\n\
+  .dashboard-chart-id-27 .superset-legacy-chart-big-number,\n.dashboard-chart-id-28\
+  \ .superset-legacy-chart-big-number {\n  padding-left: 18px !important;\n  box-sizing:\
+  \ border-box !important;\n}\n\n/* M\xE1rgenes laterales en secciones de abajo */\n\
+  #GRID_ID > .dragdroppable-row:not(:first-child) .dragdroppable-column > .dragdroppable-object\
+  \ {\n  margin-left: 8px !important;\n  margin-right: 8px !important;\n}\n\n/* PDF:\
+  \ evitar t\xEDtulos sueltos */\n#user-content-general-view, #user-content-error-view,\n\
+  #user-content-distribution-view, #user-content-lighthouse-view, #user-content-tps-view\
+  \ {\n  page-break-after: avoid !important; break-after: avoid !important;\n}\n\n\
+  \n/* KPI titles: allow wrap para nombres largos */\n.dashboard-chart-id-24 .header-title,\n\
+  .dashboard-chart-id-27 .header-title,\n.dashboard-chart-id-28 .header-title,\n.dashboard-chart-id-1\
+  \ .header-title,\n.dashboard-chart-id-16 .header-title {\n  white-space: normal\
+  \ !important;\n  overflow: visible !important;\n  line-height: 1.3 !important;\n\
+  \  font-size: 10px !important;\n}\n\n\n/* Chart 28: agregar % al n\xFAmero */\n\
+  .dashboard-chart-id-28 [data-test-viz-type='big_number_total'] .header-line::after\
+  \ {\n  content: '%';\n  font-size: inherit;\n  font-weight: inherit;\n  color: inherit;\n\
+  }\n\n\n/* ===== PDF page-break fixes ===== */\n/* Evitar que headers de secci\xF3\
+  n queden solos al final de p\xE1gina */\n#user-content-general-view,\n#user-content-error-view,\n\
+  #user-content-distribution-view,\n#user-content-lighthouse-view,\n#user-content-tps-view\
+  \ {\n  page-break-after: avoid !important;\n  break-after: avoid !important;\n}\n\
+  \n/* Spacers vac\xEDos: sin borde, sin sombra, fondo transparente */\n.dragdroppable\
+  \ .dragdroppable-content .empty-droptarget,\n.dashboard-markdown:empty,\n.dashboard-markdown\
+  \ p:empty {\n  display: none;\n}\n\n\n/* ===== Spacers PDF invisibles ===== */\n\
+  .chart-container:has(#user-content-pdf-spacer),\n.slice-container:has(#user-content-pdf-spacer),\n\
+  .dragdroppable:has(#user-content-pdf-spacer),\n.dragdroppable-row:has(#user-content-pdf-spacer)\
+  \ {\n  background: transparent !important;\n  border: none !important;\n  box-shadow:\
+  \ none !important;\n  padding: 0 !important;\n  margin: 0 !important;\n}\n#user-content-pdf-spacer\
+  \ {\n  display: block;\n  height: 100%;\n  background: transparent !important;\n\
+  }\n\n/* \u2550\u2550\u2550 ESCENARIO DE PRUEBA \u2550\u2550\u2550 */\n#user-content-scenario-section\
+  \ {\n  margin-top:14px !important; padding-top:12px !important;\n  border-top:1px\
+  \ solid rgba(74,52,102,.25) !important;\n}\n#user-content-scenario-section h3 {\n\
+  \  color:var(--pd) !important; font-size:11px !important; font-weight:700 !important;\n\
+  \  text-transform:uppercase !important; letter-spacing:1px !important; margin:0\
+  \ 0 8px !important;\n}\n#user-content-scenario-section ul {\n  margin:0 !important;\
+  \ padding-left:0 !important; list-style:none !important;\n}\n#user-content-scenario-section\
+  \ li {\n  font-size:12.5px !important; color:var(--text2) !important; margin:4px\
+  \ 0 !important;\n}\n#user-content-scenario-section li strong {\n  color:var(--pd)\
+  \ !important; font-weight:600 !important;\n}\n\n/* \u2500\u2500 KPI alignment \u2500\
+  \u2500 */\n.dashboard-chart-id-27 .chart-container {\n  margin-top: 4px !important;\n\
+  }\n"
+slug: template-nav-3
+certified_by: ''
+certification_details: ''
+published: false
+uuid: d583ca10-fb90-4073-9c38-bd9775fa096a
+position:
+  GRID_ID:
+    children:
+    - N3-ROW-HERO
+    - N3-ROW-SP-GENERAL
+    - N3-ROW-H-GENERAL
+    - N3-ROW-RPS
+    - N3-ROW-RT
+    - N3-ROW-EPS
+    - N3-ROW-SP-ERRWEB
+    - N3-ROW-H-ERRWEB
+    - N3-ROW-ERR-NWEB
+    - N3-ROW-SP-ERRRAPP
+    - N3-ROW-H-ERRRAPP
+    - N3-ROW-ERR-NRAPP
+    - N3-ROW-SP-LH
+    - N3-ROW-H-LH
+    - N3-ROW-LH
+    - N3-ROW-SP-429
+    - N3-ROW-H-429
+    - N3-ROW-429
+    - N3-ROW-SP-TPS
+    - N3-ROW-H-TPS
+    - N3-ROW-TPS
+    id: GRID_ID
+    parents:
+    - ROOT_ID
+    type: GRID
+  HEADER_ID:
+    id: HEADER_ID
+    meta:
+      text: TEMPLATE-DASHBOARD-3 (NAV)
+    type: HEADER
+  N3-C1:
+    children: []
+    id: N3-C1
+    meta:
+      chartId: 1
+      height: 24
+      sliceName: Usuarios concurrentes
+      uuid: a36c4616-1182-4553-910e-67f753ab76c1
+      width: 2
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    - N3-ROW-HERO
+    - N3-COL-RIGHT
+    - N3-ROW-KPIS
+    - N3-COL-K1
+    type: CHART
+  N3-C11:
+    children: []
+    id: N3-C11
+    meta:
+      chartId: 11
+      height: 50
+      sliceName: Errors in "NAV WEB"
+      uuid: 9f962b15-ce91-4bf9-8f36-ddf0828510cc
+      width: 12
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    - N3-ROW-ERR-NWEB
+    type: CHART
+  N3-C13:
+    children: []
+    id: N3-C13
+    meta:
+      chartId: 13
+      height: 58
+      sliceName: Errors in "NAV RAPP"
+      uuid: 9ee9afbb-3886-4a00-a265-ed1ff35987f1
+      width: 12
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    - N3-ROW-ERR-NRAPP
+    type: CHART
+  N3-C16:
+    children: []
+    id: N3-C16
+    meta:
+      chartId: 16
+      height: 24
+      sliceName: Error rate %
+      uuid: b29eafb5-969f-4ddf-bbf1-8fe6a0bd34f0
+      width: 2
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    - N3-ROW-HERO
+    - N3-COL-RIGHT
+    - N3-ROW-KPIS
+    - N3-COL-K4
+    type: CHART
+  N3-C17:
+    children: []
+    id: N3-C17
+    meta:
+      chartId: 17
+      height: 38
+      sliceName: "Performance (Puntuaci\xF3n de Velocidad de carga del sitio)"
+      uuid: c178c631-c5f8-4c6f-8f9b-11e9a814c617
+      width: 4
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    - N3-ROW-LH
+    type: CHART
+  N3-C2:
+    children: []
+    id: N3-C2
+    meta:
+      chartId: 2
+      height: 24
+      sliceName: Failed Requests
+      uuid: c45e7cf7-112a-4ee1-a2b8-a2858a5993a3
+      width: 2
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    - N3-ROW-HERO
+    - N3-COL-RIGHT
+    - N3-ROW-KPIS
+    - N3-COL-K3
+    type: CHART
+  N3-C22:
+    children: []
+    id: N3-C22
+    meta:
+      chartId: 22
+      height: 160
+      sliceName: TPS vs. Target Metrics
+      uuid: 1ed7df21-b0b0-4600-8859-447eb0e301df
+      width: 12
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    - N3-ROW-TPS
+    type: CHART
+  N3-C26:
+    children: []
+    id: N3-C26
+    meta:
+      chartId: 26
+      height: 88
+      sliceName: Errors 429
+      uuid: f444f906-da02-4f25-bb12-db1b0f36232d
+      width: 12
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    - N3-ROW-429
+    type: CHART
+  N3-C27:
+    children: []
+    id: N3-C27
+    meta:
+      chartId: 27
+      height: 24
+      sliceName: TPS
+      uuid: e14144ab-5688-4f92-9d25-199f190acd36
+      width: 2
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    - N3-ROW-HERO
+    - N3-COL-RIGHT
+    - N3-ROW-KPIS
+    - N3-COL-K2
+    type: CHART
+  N3-C28:
+    children: []
+    id: N3-C28
+    meta:
+      chartId: 28
+      height: 18
+      sliceName: Cumplimiento General TPS
+      uuid: fb9aa606-6d8e-4eae-9a30-107f105aa3d2
+      width: 8
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    - N3-ROW-HERO
+    - N3-COL-RIGHT
+    - N3-ROW-CUMPL
+    - N3-COL-CUMPL
+    type: CHART
+  N3-C4:
+    children: []
+    id: N3-C4
+    meta:
+      chartId: 4
+      height: 43
+      sliceName: Request per second / Active users
+      uuid: 2563d41c-5b90-4ea5-8f7b-20b731b1bbba
+      width: 8
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    - N3-ROW-HERO
+    - N3-COL-RIGHT
+    - N3-ROW-RPS-ACTIVE
+    type: CHART
+  N3-C6:
+    children: []
+    id: N3-C6
+    meta:
+      chartId: 6
+      height: 72
+      sliceName: Request per second
+      uuid: eb9523df-21af-4c28-b45d-53730dd072c9
+      width: 12
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    - N3-ROW-RPS
+    type: CHART
+  N3-C7:
+    children: []
+    id: N3-C7
+    meta:
+      chartId: 7
+      height: 66
+      sliceName: Transaction response times (average)
+      uuid: 76967fd4-5455-4f89-b71e-71b933ccb05a
+      width: 12
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    - N3-ROW-RT
+    type: CHART
+  N3-C8:
+    children: []
+    id: N3-C8
+    meta:
+      chartId: 8
+      height: 58
+      sliceName: Error per second
+      uuid: 7dc103ae-7bde-43e7-8464-afa53fde7c69
+      width: 12
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    - N3-ROW-EPS
+    type: CHART
+  N3-C9:
+    children: []
+    id: N3-C9
+    meta:
+      chartId: 9
+      height: 50
+      sliceName: 'Errors per second ( global ) '
+      uuid: fa13373d-78ab-41db-be48-5eac1cca6f4a
+      width: 8
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    - N3-ROW-HERO
+    - N3-COL-RIGHT
+    - N3-ROW-EPS-GLOBAL
+    type: CHART
+  N3-COL-CUMPL:
+    children:
+    - N3-C28
+    id: N3-COL-CUMPL
+    meta:
+      background: BACKGROUND_TRANSPARENT
+      width: 8
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    - N3-ROW-HERO
+    - N3-COL-RIGHT
+    - N3-ROW-CUMPL
+    type: COLUMN
+  N3-COL-K1:
+    children:
+    - N3-C1
+    id: N3-COL-K1
+    meta:
+      background: BACKGROUND_TRANSPARENT
+      width: 2
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    - N3-ROW-HERO
+    - N3-COL-RIGHT
+    - N3-ROW-KPIS
+    type: COLUMN
+  N3-COL-K2:
+    children:
+    - N3-C27
+    id: N3-COL-K2
+    meta:
+      background: BACKGROUND_TRANSPARENT
+      width: 2
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    - N3-ROW-HERO
+    - N3-COL-RIGHT
+    - N3-ROW-KPIS
+    type: COLUMN
+  N3-COL-K3:
+    children:
+    - N3-C2
+    id: N3-COL-K3
+    meta:
+      background: BACKGROUND_TRANSPARENT
+      width: 2
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    - N3-ROW-HERO
+    - N3-COL-RIGHT
+    - N3-ROW-KPIS
+    type: COLUMN
+  N3-COL-K4:
+    children:
+    - N3-C16
+    id: N3-COL-K4
+    meta:
+      background: BACKGROUND_TRANSPARENT
+      width: 2
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    - N3-ROW-HERO
+    - N3-COL-RIGHT
+    - N3-ROW-KPIS
+    type: COLUMN
+  N3-COL-RIGHT:
+    children:
+    - N3-MD-LOGO
+    - N3-MD-TITLE
+    - N3-ROW-KPIS
+    - N3-ROW-CUMPL
+    - N3-ROW-RPS-ACTIVE
+    - N3-ROW-EPS-GLOBAL
+    id: N3-COL-RIGHT
+    meta:
+      background: BACKGROUND_TRANSPARENT
+      width: 8
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    - N3-ROW-HERO
+    type: COLUMN
+  N3-COL-SUMMARY:
+    children:
+    - N3-MD-RESUMEN
+    id: N3-COL-SUMMARY
+    meta:
+      background: BACKGROUND_TRANSPARENT
+      width: 4
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    - N3-ROW-HERO
+    type: COLUMN
+  N3-MD-H-429:
+    children: []
+    id: N3-MD-H-429
+    meta:
+      code: '<div id="lighthouse-view"><h2>429 Errors</h2>
+
+        </div>'
+      height: 12
+      width: 12
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    - N3-ROW-H-429
+    type: MARKDOWN
+  N3-MD-H-ERRRAPP:
+    children: []
+    id: N3-MD-H-ERRRAPP
+    meta:
+      code: "<div id=\"error-view\"><h2>Errores frecuentes en navegaci\xF3n RAPP</h2>\n\
+        </div>"
+      height: 12
+      width: 12
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    - N3-ROW-H-ERRRAPP
+    type: MARKDOWN
+  N3-MD-H-ERRWEB:
+    children: []
+    id: N3-MD-H-ERRWEB
+    meta:
+      code: "<div id=\"error-view\"><h2>Errores frecuentes en navegaci\xF3n Web</h2>\n\
+        </div>"
+      height: 12
+      width: 12
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    - N3-ROW-H-ERRWEB
+    type: MARKDOWN
+  N3-MD-H-GENERAL:
+    children: []
+    id: N3-MD-H-GENERAL
+    meta:
+      code: "<div id=\"general-view\"><h2>Vista general de la ejecuci\xF3n de la prueba</h2>\n\
+        </div>"
+      height: 12
+      width: 12
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    - N3-ROW-H-GENERAL
+    type: MARKDOWN
+  N3-MD-H-LH:
+    children: []
+    id: N3-MD-H-LH
+    meta:
+      code: '<div id="lighthouse-view"><h2>Lighthouse</h2>
+
+        </div>'
+      height: 12
+      width: 12
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    - N3-ROW-H-LH
+    type: MARKDOWN
+  N3-MD-H-TPS:
+    children: []
+    id: N3-MD-H-TPS
+    meta:
+      code: '<div id="tps-view"><h2>Transacciones por segundo alcanzadas</h2>
+
+        </div>'
+      height: 12
+      width: 12
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    - N3-ROW-H-TPS
+    type: MARKDOWN
+  N3-MD-LOGO:
+    children: []
+    id: N3-MD-LOGO
+    meta:
+      code: <img src="/static/assets/images/custom_logo.png" width="150" style="display:block">
+      height: 5
+      width: 8
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    - N3-ROW-HERO
+    - N3-COL-RIGHT
+    type: MARKDOWN
+  N3-MD-RESUMEN:
+    children: []
+    id: N3-MD-RESUMEN
+    meta:
+      code: "<div id=\"summary-section\">\n  <div id=\"summary-container\">\n    <h2>Resumen</h2>\n\
+        \    <div id=\"summary-detail\">\n      <p id=\"summary-report\">Prueba de\
+        \ Navegaci\xF3n.\n\n- Peak usuarios concurrentes: -\n\nErrores en prueba de\
+        \ navegaci\xF3n:\n- -\n\nLatencias p95 - navegaci\xF3n:\n- -\n\nObservaciones:\n\
+        \  - -\n\nPendientes:\n  - -\n      </p>\n    </div>\n  </div>\n</div>"
+      height: 183
+      width: 4
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    - N3-ROW-HERO
+    - N3-COL-SUMMARY
+    type: MARKDOWN
+  N3-MD-TITLE:
+    children: []
+    id: N3-MD-TITLE
+    meta:
+      code: "<div id=\"transparent\">\n  <h2>Resultados de Performance \u2014 Navegaci\xF3\
+        n</h2>\n  <br>\n  <div id=\"time-dashboard\">\n    <p id=\"time-dashboard-text\"\
+        >Prueba desde las 00:00 AM a 00:00 AM CL</p>\n  </div>\n\n<div id=\"scenario-section\"\
+        \ style=\"margin-top:14px;padding-top:11px;border-top:1px solid rgba(74,52,102,.2)\"\
+        >\n<p style=\"margin:0 0 6px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#3f2a5c\"\
+        >Escenario de Prueba</p>\n<table style=\"border-collapse:collapse;width:100%\"\
+        >\n<tr><td style=\"padding:3px 10px 3px 0;color:#3f2a5c;font-weight:600;font-size:12px;white-space:nowrap\"\
+        >Tipo</td><td style=\"padding:3px 20px 3px 0;color:#55556e;font-size:12px\"\
+        >[Tipo de prueba]</td><td style=\"padding:3px 10px 3px 0;color:#3f2a5c;font-weight:600;font-size:12px;white-space:nowrap\"\
+        >Ramp up</td><td style=\"padding:3px 20px 3px 0;color:#55556e;font-size:12px\"\
+        >[x] min</td></tr>\n<tr><td style=\"padding:3px 10px 3px 0;color:#3f2a5c;font-weight:600;font-size:12px;white-space:nowrap\"\
+        >Duraci\xF3n</td><td style=\"padding:3px 20px 3px 0;color:#55556e;font-size:12px\"\
+        >[x] horas/min</td><td style=\"padding:3px 10px 3px 0;color:#3f2a5c;font-weight:600;font-size:12px;white-space:nowrap\"\
+        >Flujos</td><td style=\"padding:3px 20px 3px 0;color:#55556e;font-size:12px\"\
+        >[Home, PDP, ...]</td></tr>\n</table>\n</div>\n</div>"
+      height: 26
+      width: 8
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    - N3-ROW-HERO
+    - N3-COL-RIGHT
+    type: MARKDOWN
+  N3-ROW-429:
+    children:
+    - N3-C26
+    id: N3-ROW-429
+    meta:
+      background: BACKGROUND_TRANSPARENT
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    type: ROW
+  N3-ROW-CUMPL:
+    children:
+    - N3-COL-CUMPL
+    id: N3-ROW-CUMPL
+    meta:
+      background: BACKGROUND_TRANSPARENT
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    - N3-ROW-HERO
+    - N3-COL-RIGHT
+    type: ROW
+  N3-ROW-EPS:
+    children:
+    - N3-C8
+    id: N3-ROW-EPS
+    meta:
+      background: BACKGROUND_TRANSPARENT
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    type: ROW
+  N3-ROW-EPS-GLOBAL:
+    children:
+    - N3-C9
+    id: N3-ROW-EPS-GLOBAL
+    meta:
+      background: BACKGROUND_TRANSPARENT
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    - N3-ROW-HERO
+    - N3-COL-RIGHT
+    type: ROW
+  N3-ROW-ERR-NRAPP:
+    children:
+    - N3-C13
+    id: N3-ROW-ERR-NRAPP
+    meta:
+      background: BACKGROUND_TRANSPARENT
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    type: ROW
+  N3-ROW-ERR-NWEB:
+    children:
+    - N3-C11
+    id: N3-ROW-ERR-NWEB
+    meta:
+      background: BACKGROUND_TRANSPARENT
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    type: ROW
+  N3-ROW-H-429:
+    children:
+    - N3-MD-H-429
+    id: N3-ROW-H-429
+    meta:
+      background: BACKGROUND_TRANSPARENT
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    type: ROW
+  N3-ROW-H-ERRRAPP:
+    children:
+    - N3-MD-H-ERRRAPP
+    id: N3-ROW-H-ERRRAPP
+    meta:
+      background: BACKGROUND_TRANSPARENT
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    type: ROW
+  N3-ROW-H-ERRWEB:
+    children:
+    - N3-MD-H-ERRWEB
+    id: N3-ROW-H-ERRWEB
+    meta:
+      background: BACKGROUND_TRANSPARENT
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    type: ROW
+  N3-ROW-H-GENERAL:
+    children:
+    - N3-MD-H-GENERAL
+    id: N3-ROW-H-GENERAL
+    meta:
+      background: BACKGROUND_TRANSPARENT
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    type: ROW
+  N3-ROW-H-LH:
+    children:
+    - N3-MD-H-LH
+    id: N3-ROW-H-LH
+    meta:
+      background: BACKGROUND_TRANSPARENT
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    type: ROW
+  N3-ROW-H-TPS:
+    children:
+    - N3-MD-H-TPS
+    id: N3-ROW-H-TPS
+    meta:
+      background: BACKGROUND_TRANSPARENT
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    type: ROW
+  N3-ROW-HERO:
+    children:
+    - N3-COL-SUMMARY
+    - N3-COL-RIGHT
+    id: N3-ROW-HERO
+    meta:
+      background: BACKGROUND_TRANSPARENT
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    type: ROW
+  N3-ROW-KPIS:
+    children:
+    - N3-COL-K1
+    - N3-COL-K2
+    - N3-COL-K3
+    - N3-COL-K4
+    id: N3-ROW-KPIS
+    meta:
+      background: BACKGROUND_TRANSPARENT
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    - N3-ROW-HERO
+    - N3-COL-RIGHT
+    type: ROW
+  N3-ROW-LH:
+    children:
+    - N3-C17
+    id: N3-ROW-LH
+    meta:
+      background: BACKGROUND_TRANSPARENT
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    type: ROW
+  N3-ROW-RPS:
+    children:
+    - N3-C6
+    id: N3-ROW-RPS
+    meta:
+      background: BACKGROUND_TRANSPARENT
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    type: ROW
+  N3-ROW-RPS-ACTIVE:
+    children:
+    - N3-C4
+    id: N3-ROW-RPS-ACTIVE
+    meta:
+      background: BACKGROUND_TRANSPARENT
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    - N3-ROW-HERO
+    - N3-COL-RIGHT
+    type: ROW
+  N3-ROW-RT:
+    children:
+    - N3-C7
+    id: N3-ROW-RT
+    meta:
+      background: BACKGROUND_TRANSPARENT
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    type: ROW
+  N3-ROW-TPS:
+    children:
+    - N3-C22
+    id: N3-ROW-TPS
+    meta:
+      background: BACKGROUND_TRANSPARENT
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    type: ROW
+  ROOT_ID:
+    children:
+    - GRID_ID
+    id: ROOT_ID
+    type: ROOT
+  N3-SP-GENERAL:
+    children: []
+    id: N3-SP-GENERAL
+    meta:
+      code: <div id="pdf-spacer"></div>
+      height: 8
+      width: 12
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    type: MARKDOWN
+  N3-ROW-SP-GENERAL:
+    children:
+    - N3-SP-GENERAL
+    id: N3-ROW-SP-GENERAL
+    meta:
+      background: BACKGROUND_TRANSPARENT
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    type: ROW
+  N3-SP-ERRWEB:
+    children: []
+    id: N3-SP-ERRWEB
+    meta:
+      code: <div id="pdf-spacer"></div>
+      height: 8
+      width: 12
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    type: MARKDOWN
+  N3-ROW-SP-ERRWEB:
+    children:
+    - N3-SP-ERRWEB
+    id: N3-ROW-SP-ERRWEB
+    meta:
+      background: BACKGROUND_TRANSPARENT
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    type: ROW
+  N3-SP-ERRRAPP:
+    children: []
+    id: N3-SP-ERRRAPP
+    meta:
+      code: <div id="pdf-spacer"></div>
+      height: 8
+      width: 12
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    type: MARKDOWN
+  N3-ROW-SP-ERRRAPP:
+    children:
+    - N3-SP-ERRRAPP
+    id: N3-ROW-SP-ERRRAPP
+    meta:
+      background: BACKGROUND_TRANSPARENT
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    type: ROW
+  N3-SP-LH:
+    children: []
+    id: N3-SP-LH
+    meta:
+      code: <div id="pdf-spacer"></div>
+      height: 8
+      width: 12
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    type: MARKDOWN
+  N3-ROW-SP-LH:
+    children:
+    - N3-SP-LH
+    id: N3-ROW-SP-LH
+    meta:
+      background: BACKGROUND_TRANSPARENT
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    type: ROW
+  N3-SP-429:
+    children: []
+    id: N3-SP-429
+    meta:
+      code: <div id="pdf-spacer"></div>
+      height: 8
+      width: 12
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    type: MARKDOWN
+  N3-ROW-SP-429:
+    children:
+    - N3-SP-429
+    id: N3-ROW-SP-429
+    meta:
+      background: BACKGROUND_TRANSPARENT
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    type: ROW
+  N3-SP-TPS:
+    children: []
+    id: N3-SP-TPS
+    meta:
+      code: <div id="pdf-spacer"></div>
+      height: 8
+      width: 12
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    type: MARKDOWN
+  N3-ROW-SP-TPS:
+    children:
+    - N3-SP-TPS
+    id: N3-ROW-SP-TPS
+    meta:
+      background: BACKGROUND_TRANSPARENT
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    type: ROW
+metadata:
+  color_scheme: ''
+  cross_filters_enabled: false
+  expanded_slices: {}
+  label_colors: {}
+  native_filter_configuration:
+  - cascadeParentIds: []
+    chartsInScope:
+    - 1
+    - 2
+    - 3
+    - 4
+    - 6
+    - 7
+    - 8
+    - 9
+    - 11
+    - 13
+    - 16
+    - 17
+    - 22
+    controlValues:
+      enableEmptyFilter: false
+    defaultDataMask:
+      extraFormData:
+        time_range: '2024-09-13T07:00:00 : 2024-09-13T08:30:59'
+      filterState:
+        value: '2024-09-13T07:00:00 : 2024-09-13T08:30:59'
+    description: ''
+    filterType: filter_time
+    id: NATIVE_FILTER-3gBucW7sAQQg6zuh9Udvc
+    name: time_filter
+    scope:
+      excluded: []
+      rootPath:
+      - ROOT_ID
+    tabsInScope: []
+    targets:
+    - {}
+    type: NATIVE_FILTER
+  - cascadeParentIds: []
+    chartsInScope:
+    - 1
+    - 2
+    - 3
+    - 4
+    - 6
+    - 7
+    - 8
+    - 9
+    - 11
+    - 13
+    - 16
+    controlValues:
+      defaultToFirstItem: false
+      enableEmptyFilter: true
+      inverseSelection: false
+      multiSelect: true
+      searchAllOptions: false
+    defaultDataMask:
+      extraFormData:
+        filters:
+        - col: testplan
+          op: IN
+          val:
+          - perf-locust-cl-cyberday
+      filterState:
+        label: perf-locust-cl-cyberday
+        validateMessage: false
+        validateStatus: false
+        value:
+        - perf-locust-cl-cyberday
+    description: ''
+    filterType: filter_select
+    id: NATIVE_FILTER-PFzH5z9ERSsu1vGnp0Vre
+    name: testplan
+    scope:
+      excluded: []
+      rootPath:
+      - ROOT_ID
+    tabsInScope: []
+    targets:
+    - column:
+        name: testplan
+      datasetUuid: bfbe2bd0-7c67-48da-ad70-366371a25611
+    type: NATIVE_FILTER
+  - cascadeParentIds: []
+    chartsInScope:
+    - 22
+    controlValues:
+      defaultToFirstItem: false
+      enableEmptyFilter: false
+      inverseSelection: false
+      multiSelect: true
+      searchAllOptions: false
+    defaultDataMask:
+      extraFormData: {}
+      filterState: {}
+      ownState: {}
+    description: ''
+    filterType: filter_select
+    id: NATIVE_FILTER-EJlF9SMMF8q4dyG-qBr7P
+    name: uid
+    scope:
+      excluded:
+      - 12
+      - 17
+      - 1
+      - 13
+      - 10
+      - 8
+      - 14
+      - 15
+      - 2
+      - 3
+      - 4
+      - 6
+      - 7
+      - 16
+      - 9
+      - 11
+      rootPath:
+      - ROOT_ID
+    tabsInScope: []
+    targets:
+    - column:
+        name: uid
+      datasetUuid: 08369479-01f2-4346-954f-c71ed09a700a
+    type: NATIVE_FILTER
+  refresh_frequency: 0
+  shared_label_colors: {}
+  timed_refresh_immune_slices: []
+  default_filters: '{}'
+  chart_configuration:
+    '4':
+      id: 4
+      crossFilters:
+        scope: global
+        chartsInScope:
+        - 1
+        - 2
+        - 6
+        - 7
+        - 8
+        - 9
+        - 11
+        - 13
+        - 16
+        - 17
+        - 22
+        - 26
+        - 27
+        - 28
+    '6':
+      id: 6
+      crossFilters:
+        scope: global
+        chartsInScope:
+        - 1
+        - 2
+        - 4
+        - 7
+        - 8
+        - 9
+        - 11
+        - 13
+        - 16
+        - 17
+        - 22
+        - 26
+        - 27
+        - 28
+    '7':
+      id: 7
+      crossFilters:
+        scope: global
+        chartsInScope:
+        - 1
+        - 2
+        - 4
+        - 6
+        - 8
+        - 9
+        - 11
+        - 13
+        - 16
+        - 17
+        - 22
+        - 26
+        - 27
+        - 28
+    '8':
+      id: 8
+      crossFilters:
+        scope: global
+        chartsInScope:
+        - 1
+        - 2
+        - 4
+        - 6
+        - 7
+        - 9
+        - 11
+        - 13
+        - 16
+        - 17
+        - 22
+        - 26
+        - 27
+        - 28
+    '9':
+      id: 9
+      crossFilters:
+        scope: global
+        chartsInScope:
+        - 1
+        - 2
+        - 4
+        - 6
+        - 7
+        - 8
+        - 11
+        - 13
+        - 16
+        - 17
+        - 22
+        - 26
+        - 27
+        - 28
+    '11':
+      id: 11
+      crossFilters:
+        scope: global
+        chartsInScope:
+        - 1
+        - 2
+        - 4
+        - 6
+        - 7
+        - 8
+        - 9
+        - 13
+        - 16
+        - 17
+        - 22
+        - 26
+        - 27
+        - 28
+    '13':
+      id: 13
+      crossFilters:
+        scope: global
+        chartsInScope:
+        - 1
+        - 2
+        - 4
+        - 6
+        - 7
+        - 8
+        - 9
+        - 11
+        - 16
+        - 17
+        - 22
+        - 26
+        - 27
+        - 28
+    '17':
+      id: 17
+      crossFilters:
+        scope: global
+        chartsInScope:
+        - 1
+        - 2
+        - 4
+        - 6
+        - 7
+        - 8
+        - 9
+        - 11
+        - 13
+        - 16
+        - 22
+        - 26
+        - 27
+        - 28
+    '22':
+      id: 22
+      crossFilters:
+        scope: global
+        chartsInScope:
+        - 1
+        - 2
+        - 4
+        - 6
+        - 7
+        - 8
+        - 9
+        - 11
+        - 13
+        - 16
+        - 17
+        - 26
+        - 27
+        - 28
+    '26':
+      id: 26
+      crossFilters:
+        scope: global
+        chartsInScope:
+        - 1
+        - 2
+        - 4
+        - 6
+        - 7
+        - 8
+        - 9
+        - 11
+        - 13
+        - 16
+        - 17
+        - 22
+        - 27
+        - 28
+  global_chart_configuration:
+    scope:
+      rootPath:
+      - ROOT_ID
+      excluded: []
+    chartsInScope:
+    - 1
+    - 2
+    - 4
+    - 6
+    - 7
+    - 8
+    - 9
+    - 11
+    - 13
+    - 16
+    - 17
+    - 22
+    - 26
+    - 27
+    - 28
+  color_scheme_domain: []
+version: 1.0.0

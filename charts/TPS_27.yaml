@@ -1,0 +1,31 @@
+slice_name: TPS
+description: null
+certified_by: null
+certification_details: null
+viz_type: big_number_total
+params:
+  datasource: 26__table
+  viz_type: big_number_total
+  metric:
+    expressionType: SIMPLE
+    column:
+      column_name: tps
+      type: DECIMAL
+      id: null
+    aggregate: SUM
+    hasCustomLabel: true
+    label: SUM TPS
+    optionName: metric_tps_avg
+  adhoc_filters: []
+  header_font_size: 0.4
+  subheader_font_size: 0.15
+  y_axis_format: ',.2f'
+  conditional_formatting: []
+  extra_form_data: {}
+query_context: '{"datasource":{"id":26,"type":"table"},"force":false,"queries":[{"filters":[],"extras":{"having":"","where":""},"applied_time_extras":{},"columns":[],"metrics":[{"aggregate":"SUM","column":{"column_name":"tps","id":null,"type":"DECIMAL"},"expressionType":"SIMPLE","hasCustomLabel":true,"label":"SUM
+  TPS","optionName":"metric_tps_avg"}],"annotation_layers":[],"series_limit":0,"order_desc":true,"url_params":{},"custom_params":{},"custom_form_data":{}}],"form_data":{"adhoc_filters":[],"conditional_formatting":[],"datasource":"26__table","extra_form_data":{},"header_font_size":0.3,"metric":{"aggregate":"SUM","column":{"column_name":"tps","id":null,"type":"DECIMAL"},"expressionType":"SIMPLE","hasCustomLabel":true,"label":"SUM
+  TPS","optionName":"metric_tps_avg"},"slice_id":27,"subheader_font_size":0.15,"viz_type":"big_number_total","y_axis_format":",.2f","force":false,"result_format":"json","result_type":"full"},"result_format":"json","result_type":"full"}'
+cache_timeout: null
+uuid: e14144ab-5688-4f92-9d25-199f190acd36
+version: 1.0.0
+dataset_uuid: 19fab364-2671-4f7d-a540-307b62ce3421

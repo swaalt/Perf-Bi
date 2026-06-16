@@ -1,0 +1,182 @@
+table_name: Tps_success
+main_dttm_col: null
+description: null
+default_endpoint: null
+offset: 0
+cache_timeout: null
+catalog: postgres
+schema: public
+sql: "WITH \r\n-- Extraer platform y endpoint_norm primero para evitar usar \"name\"\
+  \ directamente en la agregaci\xF3n\r\nraw_data AS (\r\n    SELECT\r\n        bucket\
+  \ AS time_interval,\r\n        REGEXP_REPLACE(name, '.*\\[(NAV |)?(WEB|RAPP)\\]\\\
+  s*\\[([^\\]]+)\\].*', '\\2') AS platform,\r\n        REGEXP_REPLACE(name, '.*\\\
+  [(NAV |)?(WEB|RAPP)\\]\\s*\\[([^\\]]+)\\].*', '\\3') AS endpoint_raw,\r\n      \
+  \  CASE \r\n            WHEN REGEXP_REPLACE(name, '.*\\[(NAV |)?(WEB|RAPP)\\]\\\
+  s*\\[([^\\]]+)\\].*', '\\3') = 'CATEGORY' THEN 'CATALOG'\r\n            WHEN REGEXP_REPLACE(name,\
+  \ '.*\\[(NAV |)?(WEB|RAPP)\\]\\s*\\[([^\\]]+)\\].*', '\\3') = 'CART' THEN 'CART_BY_ID'\r\
+  \n            ELSE REGEXP_REPLACE(name, '.*\\[(NAV |)?(WEB|RAPP)\\]\\s*\\[([^\\\
+  ]]+)\\].*', '\\3')\r\n        END AS endpoint_norm,\r\n        requests,\r\n   \
+  \     testplan\r\n    FROM locust_metrics_per_5s\r\n    WHERE \r\n        name ~\
+  \ '\\[(NAV |)?(WEB|RAPP)\\]\\s*\\[[^\\]]+\\]'\r\n        AND (\r\n            {%\
+  \ if from_dttm is not none and to_dttm is not none %}\r\n                bucket\
+  \ AT TIME ZONE 'America/Santiago' > '{{ from_dttm }}'\r\n                AND bucket\
+  \ AT TIME ZONE 'America/Santiago' < '{{ to_dttm }}'\r\n            {% else %}\r\n\
+  \                1=0\r\n            {% endif %}\r\n        )\r\n        AND (\r\n\
+  \            {% if filter_values('testplan') %}\r\n                testplan IN {{\
+  \ filter_values('testplan')|where_in }}\r\n            {% else %}\r\n          \
+  \      1=0\r\n            {% endif %}\r\n        )\r\n),\r\n-- Calcular TPS usando\
+  \ los valores preprocesados\r\ntps_calculations AS (\r\n    SELECT\r\n        time_interval,\r\
+  \n        platform,\r\n        endpoint_norm,\r\n        CASE\r\n            WHEN\
+  \ endpoint_raw = 'HOME' AND platform = 'WEB' THEN (SUM(requests) / 5.0) / 9\r\n\
+  \            WHEN endpoint_raw = 'HOME' AND platform = 'RAPP' THEN (SUM(requests)\
+  \ / 5.0) / 5\r\n            ELSE SUM(requests) / 5.0\r\n        END AS tps,\r\n\
+  \        MAX(testplan) AS testplan\r\n    FROM raw_data\r\n    GROUP BY \r\n   \
+  \     time_interval,\r\n        platform,\r\n        endpoint_norm,\r\n        endpoint_raw\r\
+  \n),\r\n-- Sumar TPS por endpoint y tiempo (combinando ambas plataformas)\r\ncombined_tps\
+  \ AS (\r\n    SELECT\r\n        endpoint_norm AS endpoint,\r\n        time_interval,\r\
+  \n        SUM(tps) AS total_tps,\r\n        MAX(testplan) AS testplan\r\n    FROM\
+  \ tps_calculations\r\n    GROUP BY endpoint_norm, time_interval\r\n),\r\n-- Identificar\
+  \ el per\xEDodo de peak de carga (top 20% de intervalos con mayor TPS total)\r\n\
+  peak_period AS (\r\n    SELECT\r\n        time_interval,\r\n        SUM(total_tps)\
+  \ AS total_system_tps\r\n    FROM combined_tps\r\n    GROUP BY time_interval\r\n\
+  \    ORDER BY total_system_tps DESC\r\n    LIMIT (SELECT GREATEST(1, CAST(COUNT(DISTINCT\
+  \ time_interval) * 0.2 AS INTEGER)) FROM combined_tps)\r\n),\r\n-- Calcular TPS\
+  \ promedio durante el peak para cada endpoint\r\navg_peak_tps AS (\r\n    SELECT\r\
+  \n        c.endpoint,\r\n        AVG(c.total_tps) AS avg_peak_tps_achieved,\r\n\
+  \        MAX(c.testplan) AS testplan\r\n    FROM combined_tps c\r\n    JOIN peak_period\
+  \ p ON c.time_interval = p.time_interval\r\n    GROUP BY c.endpoint\r\n),\r\n--\
+  \ Calcular TPS goals ponderados por endpoint\r\nweighted_tps_goals AS (\r\n    SELECT\
+  \ \r\n        CASE \r\n            WHEN UPPER(name_endpoint) = 'CATEGORY' THEN 'CATALOG'\r\
+  \n            WHEN UPPER(name_endpoint) = 'CART' THEN 'CART_BY_ID'\r\n         \
+  \   ELSE UPPER(name_endpoint)\r\n        END AS normalized_endpoint_name,\r\n  \
+  \      SUM(tps) AS weighted_tps_goal\r\n    FROM tps_goals\r\n    WHERE \r\n   \
+  \     {% if filter_values('uid') %}\r\n            uid IN {{ filter_values('uid')|where_in\
+  \ }}\r\n        {% else %}\r\n            FALSE\r\n        {% endif %}\r\n    GROUP\
+  \ BY \r\n        CASE \r\n            WHEN UPPER(name_endpoint) = 'CATEGORY' THEN\
+  \ 'CATALOG'\r\n            WHEN UPPER(name_endpoint) = 'CART' THEN 'CART_BY_ID'\r\
+  \n            ELSE UPPER(name_endpoint)\r\n        END\r\n)\r\n-- Resultado final\r\
+  \nSELECT\r\n    'ALL'::text AS name_platform,\r\n    avg_peak_tps.endpoint AS name_endpoint,\r\
+  \n    ROUND(COALESCE(avg_peak_tps.avg_peak_tps_achieved, 0)::numeric, 2) AS tps,\r\
+  \n    ROUND(COALESCE(w.weighted_tps_goal, 0)::numeric, 2) AS tps_goals,\r\n    ROUND(\r\
+  \n        CASE\r\n            WHEN w.weighted_tps_goal > 0 AND avg_peak_tps.avg_peak_tps_achieved\
+  \ IS NOT NULL \r\n            THEN (avg_peak_tps.avg_peak_tps_achieved / w.weighted_tps_goal)\
+  \ * 100\r\n            ELSE 0\r\n        END::numeric, 2\r\n    ) AS percentage,\r\
+  \n    CASE\r\n        WHEN avg_peak_tps.avg_peak_tps_achieved >= w.weighted_tps_goal\
+  \ * 1 THEN '\u2B50 Cumplido'  \r\n        WHEN avg_peak_tps.avg_peak_tps_achieved\
+  \ IS NULL THEN '\u274C Sin datos'\r\n        ELSE '\U0001F7E3 No cumplido'\r\n \
+  \   END AS status,\r\n    avg_peak_tps.testplan\r\nFROM avg_peak_tps\r\nLEFT JOIN\
+  \ weighted_tps_goals w ON UPPER(avg_peak_tps.endpoint) = UPPER(w.normalized_endpoint_name)\r\
+  \nORDER BY avg_peak_tps.endpoint;"
+params: null
+template_params: null
+filter_select_enabled: true
+fetch_values_predicate: null
+extra: null
+normalize_columns: false
+always_filter_main_dttm: false
+uuid: 19fab364-2671-4f7d-a540-307b62ce3421
+metrics:
+- metric_name: count
+  verbose_name: COUNT(*)
+  metric_type: count
+  expression: COUNT(*)
+  description: null
+  d3format: null
+  currency: null
+  extra:
+    warning_markdown: ''
+  warning_text: null
+columns:
+- column_name: tps_goals
+  verbose_name: null
+  is_dttm: false
+  is_active: true
+  type: DECIMAL
+  advanced_data_type: null
+  groupby: true
+  filterable: true
+  expression: null
+  description: null
+  python_date_format: null
+  extra:
+    warning_markdown: null
+- column_name: percentage
+  verbose_name: null
+  is_dttm: false
+  is_active: true
+  type: DECIMAL
+  advanced_data_type: null
+  groupby: true
+  filterable: true
+  expression: null
+  description: null
+  python_date_format: null
+  extra:
+    warning_markdown: null
+- column_name: tps
+  verbose_name: null
+  is_dttm: false
+  is_active: true
+  type: DECIMAL
+  advanced_data_type: null
+  groupby: true
+  filterable: true
+  expression: null
+  description: null
+  python_date_format: null
+  extra:
+    warning_markdown: null
+- column_name: name_platform
+  verbose_name: null
+  is_dttm: false
+  is_active: true
+  type: STRING
+  advanced_data_type: null
+  groupby: true
+  filterable: true
+  expression: null
+  description: null
+  python_date_format: null
+  extra:
+    warning_markdown: null
+- column_name: name_endpoint
+  verbose_name: null
+  is_dttm: false
+  is_active: true
+  type: STRING
+  advanced_data_type: null
+  groupby: true
+  filterable: true
+  expression: null
+  description: null
+  python_date_format: null
+  extra:
+    warning_markdown: null
+- column_name: testplan
+  verbose_name: null
+  is_dttm: false
+  is_active: true
+  type: STRING
+  advanced_data_type: null
+  groupby: true
+  filterable: true
+  expression: null
+  description: null
+  python_date_format: null
+  extra:
+    warning_markdown: null
+- column_name: status
+  verbose_name: null
+  is_dttm: false
+  is_active: true
+  type: STRING
+  advanced_data_type: null
+  groupby: true
+  filterable: true
+  expression: null
+  description: null
+  python_date_format: null
+  extra:
+    warning_markdown: null
+version: 1.0.0
+database_uuid: f2bcce67-057a-4a17-ab16-c53d1602290b

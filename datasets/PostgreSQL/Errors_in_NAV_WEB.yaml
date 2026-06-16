@@ -1,0 +1,129 @@
+table_name: Errors in NAV WEB
+main_dttm_col: time_interval
+description: null
+default_endpoint: null
+offset: 0
+cache_timeout: null
+catalog: postgres
+schema: public
+sql: "WITH error_counts AS (\n    SELECT \n        MAX(time_bucket('5 seconds', \"\
+  time\" AT TIME ZONE 'America/Santiago')) AS time_interval,\n        LEFT(exception,\
+  \ 50) AS exception,\n        name,\n        testplan,\n        COUNT(*) AS error_count\n\
+  \    FROM request \n    WHERE (\n        {% if from_dttm is not none and to_dttm\
+  \ is not none %}\n            \"time\" AT TIME ZONE 'America/Santiago' BETWEEN '{{\
+  \ from_dttm }}' AND '{{ to_dttm }}'\n        {% else %}\n            FALSE\n   \
+  \     {% endif %}\n    )\n    AND {% if filter_values('testplan') %}\n        (testplan\
+  \ IN {{ filter_values('testplan')|where_in }})\n    {% else %}\n        1=0\n  \
+  \  {% endif %}\n    AND exception IS NOT NULL\n    AND name LIKE '%NAV WEB%'\n \
+  \   GROUP BY name, testplan, exception\n),\ntotal_requests AS (\n    SELECT \n \
+  \       name,\n        testplan,\n        COUNT(*) AS total_count\n    FROM request\
+  \ \n    WHERE (\n        {% if from_dttm is not none and to_dttm is not none %}\n\
+  \            \"time\" AT TIME ZONE 'America/Santiago' BETWEEN '{{ from_dttm }}'\
+  \ AND '{{ to_dttm }}'\n        {% else %}\n            FALSE\n        {% endif %}\n\
+  \    )\n    AND {% if filter_values('testplan') %}\n        (testplan IN {{ filter_values('testplan')|where_in\
+  \ }})\n    {% else %}\n        1=0\n    {% endif %}\n    AND name LIKE '%NAV WEB%'\n\
+  \    GROUP BY name, testplan\n)\nSELECT \n    e.time_interval,\n    e.exception,\n\
+  \    e.name,\n    e.testplan,\n    e.error_count,\n    ROUND((e.error_count::decimal\
+  \ / t.total_count) * 100, 2) AS error_percentage\nFROM error_counts e\nJOIN total_requests\
+  \ t ON e.name = t.name AND e.testplan = t.testplan\nORDER BY error_percentage DESC\n\
+  LIMIT 7;"
+params: null
+template_params: null
+filter_select_enabled: true
+fetch_values_predicate: null
+extra: null
+normalize_columns: false
+always_filter_main_dttm: false
+uuid: 4260ca8f-eb4e-4778-a751-dc70715b032d
+metrics:
+- metric_name: count
+  verbose_name: COUNT(*)
+  metric_type: count
+  expression: COUNT(*)
+  description: null
+  d3format: null
+  currency: null
+  extra:
+    warning_markdown: ''
+  warning_text: null
+columns:
+- column_name: error_percentage
+  verbose_name: null
+  is_dttm: false
+  is_active: true
+  type: DECIMAL
+  advanced_data_type: null
+  groupby: true
+  filterable: true
+  expression: null
+  description: null
+  python_date_format: null
+  extra:
+    warning_markdown: null
+- column_name: time_interval
+  verbose_name: null
+  is_dttm: true
+  is_active: true
+  type: DATETIMETZ
+  advanced_data_type: null
+  groupby: true
+  filterable: true
+  expression: null
+  description: null
+  python_date_format: null
+  extra:
+    warning_markdown: null
+- column_name: error_count
+  verbose_name: null
+  is_dttm: false
+  is_active: true
+  type: LONGINTEGER
+  advanced_data_type: null
+  groupby: true
+  filterable: true
+  expression: null
+  description: null
+  python_date_format: null
+  extra:
+    warning_markdown: null
+- column_name: testplan
+  verbose_name: null
+  is_dttm: false
+  is_active: true
+  type: STRING
+  advanced_data_type: null
+  groupby: true
+  filterable: true
+  expression: null
+  description: null
+  python_date_format: null
+  extra:
+    warning_markdown: null
+- column_name: name
+  verbose_name: null
+  is_dttm: false
+  is_active: true
+  type: STRING
+  advanced_data_type: null
+  groupby: true
+  filterable: true
+  expression: null
+  description: null
+  python_date_format: null
+  extra:
+    warning_markdown: null
+- column_name: exception
+  verbose_name: null
+  is_dttm: false
+  is_active: true
+  type: STRING
+  advanced_data_type: null
+  groupby: true
+  filterable: true
+  expression: null
+  description: null
+  python_date_format: null
+  extra:
+    warning_markdown: null
+version: 1.0.0
+database_uuid: f2bcce67-057a-4a17-ab16-c53d1602290b

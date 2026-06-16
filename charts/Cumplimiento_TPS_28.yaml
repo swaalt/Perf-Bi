@@ -1,0 +1,41 @@
+slice_name: Cumplimiento TPS
+description: null
+certified_by: null
+certification_details: null
+viz_type: big_number_total
+params:
+  datasource: 26__table
+  viz_type: big_number_total
+  metric:
+    expressionType: SQL
+    sqlExpression: AVG(LEAST(percentage, 100))
+    column: null
+    aggregate: null
+    datasourceWarning: false
+    hasCustomLabel: true
+    label: Cumplimiento
+    optionName: metric_cumpl_avg
+  adhoc_filters: []
+  header_font_size: 0.3
+  subheader_font_size: 0.15
+  y_axis_format: ',.1f'
+  conditional_formatting: []
+  extra_form_data: {}
+  subheader: '% cumplimiento TPS'
+query_context: '{"datasource": {"id": 26, "type": "table"}, "force": false, "queries":
+  [{"filters": [], "extras": {"having": "", "where": ""}, "applied_time_extras": {},
+  "columns": [], "metrics": [{"expressionType": "SQL", "sqlExpression": "AVG(LEAST(percentage,
+  100))", "column": null, "aggregate": null, "datasourceWarning": false, "hasCustomLabel":
+  true, "label": "Cumplimiento", "optionName": "metric_cumpl_avg"}], "annotation_layers":
+  [], "series_limit": 0, "order_desc": true, "url_params": {}, "custom_params": {},
+  "custom_form_data": {}}], "form_data": {"adhoc_filters": [], "conditional_formatting":
+  [], "datasource": "26__table", "extra_form_data": {}, "header_font_size": 0.4, "metric":
+  {"expressionType": "SQL", "sqlExpression": "AVG(LEAST(percentage, 100))", "column":
+  null, "aggregate": null, "datasourceWarning": false, "hasCustomLabel": true, "label":
+  "Cumplimiento", "optionName": "metric_cumpl_avg"}, "slice_id": 28, "subheader_font_size":
+  0.15, "viz_type": "big_number_total", "y_axis_format": ".1%", "force": false, "result_format":
+  "json", "result_type": "full"}, "result_format": "json", "result_type": "full"}'
+cache_timeout: null
+uuid: fb9aa606-6d8e-4eae-9a30-107f105aa3d2
+version: 1.0.0
+dataset_uuid: 19fab364-2671-4f7d-a540-307b62ce3421

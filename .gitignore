@@ -21,3 +21,30 @@ rad.json
 *.flf
 #Test results file
 TestResults.xml
+/src/generated/prisma
+
+# Node.js
+node_modules/
+.pnpm-store/
+
+# Next.js
+.next/
+out/
+
+# Build
+dist/
+build/
+
+# Env
+.env
+.env.local
+.env*.local
+
+# DB local
+*.db
+*.sqlite
+
+# Cache
+.turbo/
+.vercel/
+*.tsbuildinfo
