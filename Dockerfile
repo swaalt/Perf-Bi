@@ -18,11 +18,9 @@ RUN adduser --system --uid 1001 nextjs
 
 RUN corepack enable && corepack prepare pnpm@latest --activate
 
-COPY --from=builder /app/public ./public
 COPY --from=builder /app/.next/standalone ./
 COPY --from=builder /app/.next/static ./.next/static
 COPY --from=builder /app/prisma ./prisma
-COPY --from=builder /app/node_modules ./node_modules
 
 RUN chown -R nextjs:nodejs /app
 USER nextjs

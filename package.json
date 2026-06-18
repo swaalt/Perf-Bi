@@ -54,6 +54,16 @@
       "prisma",
       "@prisma/client",
       "better-sqlite3"
+    ],
+    "approvedBuilds": [
+      "@prisma/engines",
+      "prisma",
+      "@prisma/client",
+      "better-sqlite3",
+      "sharp",
+      "core-js",
+      "msw",
+      "unrs-resolver"
     ]
   },
   "devDependencies": {
