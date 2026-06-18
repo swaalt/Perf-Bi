@@ -1,0 +1,9 @@
+node_modules/
+.pnpm-store/
+.next/
+.git/
+*.db
+*.sqlite
+.env
+.env.local
+README.md

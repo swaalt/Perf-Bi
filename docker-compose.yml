@@ -1,0 +1,21 @@
+services:
+  perf-bi:
+    build: .
+    container_name: perf-bi
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      - DATABASE_URL=file:./data.db
+      - NODE_ENV=production
+    volumes:
+      - perf-bi-data:/app/prisma
+    networks:
+      - superset-net
+
+networks:
+  superset-net:
+    external: true
+
+volumes:
+  perf-bi-data:
