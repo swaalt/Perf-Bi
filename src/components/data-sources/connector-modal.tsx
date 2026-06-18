@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useMemo } from "react"
+import { useState, useMemo, useEffect } from "react"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { cn } from "@/lib/utils"
 import { CheckCircle2, XCircle, Loader2, ArrowLeft, Search } from "lucide-react"
@@ -220,7 +220,7 @@ function sourceToFormData(src: DataSource): Record<string, string> {
 export function ConnectorModal({ open, onClose, editSource }: Props) {
   const isEdit = Boolean(editSource)
 
-  const [selectedType, setSelectedType] = useState<string | null>(editSource?.type ?? null)
+  const [selectedType, setSelectedType] = useState<string | null>(editSource?.type?.toUpperCase() ?? null)
   const [formData, setFormData]         = useState<Record<string, string>>(
     editSource ? sourceToFormData(editSource) : {}
   )
@@ -229,12 +229,13 @@ export function ConnectorModal({ open, onClose, editSource }: Props) {
   const [saving, setSaving]             = useState(false)
   const [search, setSearch]             = useState("")
   const [activeCategory, setActiveCategory] = useState<Category>("Todos")
-  const { addSource, updateSource } = useConnectionsStore((s) => ({ addSource: s.addSource, updateSource: s.updateSource }))
+  const addSource    = useConnectionsStore((s) => s.addSource)
+  const updateSource = useConnectionsStore((s) => s.updateSource)
 
   // Sync when editSource changes (modal reused for different items)
   useEffect(() => {
     if (editSource) {
-      setSelectedType(editSource.type)
+      setSelectedType(editSource.type.toUpperCase())
       setFormData(sourceToFormData(editSource))
     } else {
       setSelectedType(null)
@@ -244,8 +245,9 @@ export function ConnectorModal({ open, onClose, editSource }: Props) {
     setTestError("")
   }, [editSource, open])
 
-  const connector = selectedType ? ALL_CONNECTORS[selectedType] : null
-  const schema    = selectedType ? (FORM_SCHEMA[selectedType] ?? []) : []
+  const normalizedType = selectedType?.toUpperCase() ?? ""
+  const connector = normalizedType ? ALL_CONNECTORS[normalizedType] : null
+  const schema    = normalizedType ? (FORM_SCHEMA[normalizedType] ?? []) : []
 
   const filtered = useMemo(() => {
     const q = search.toLowerCase()
@@ -281,7 +283,7 @@ export function ConnectorModal({ open, onClose, editSource }: Props) {
     const meta: Record<string, string> = {}
     const base: Record<string, string | number | undefined> = {
       name: formData.name ?? "",
-      type: forType ?? selectedType!,
+      type: (forType ?? selectedType ?? "").toUpperCase(),
     }
     for (const [k, v] of Object.entries(formData)) {
       if (k === "name") continue
@@ -300,7 +302,6 @@ export function ConnectorModal({ open, onClose, editSource }: Props) {
   async function testConnection() {
     if (!formData.name) { setTestError("Ingresá un nombre primero"); setTestState("error"); return }
     setTestState("testing"); setTestError("")
-    // Always create a temp entry for testing — keeps existing data intact
     const createRes = await fetch("/api/data-sources", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -310,7 +311,6 @@ export function ConnectorModal({ open, onClose, editSource }: Props) {
     const created = await createRes.json()
     const testRes  = await fetch(`/api/data-sources/${created.id}/test`, { method: "POST" })
     const testJson = await testRes.json()
-    // Always delete temp entry
     await fetch(`/api/data-sources/${created.id}`, { method: "DELETE" })
     if (testJson.ok) {
       setTestState("ok")
@@ -453,16 +453,16 @@ export function ConnectorModal({ open, onClose, editSource }: Props) {
         )}
 
         {/* ── Config form ── */}
-        {selectedType && connector && (
+        {selectedType && (
           <div className="flex flex-col gap-4 pt-1">
             {/* Connector badge */}
             <div className="flex items-center gap-3 rounded-xl border border-zinc-800 bg-zinc-950 px-3.5 py-3">
-              <div className={cn("flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-xs font-bold", connector.bg, connector.color)}>
-                {connector.abbr}
+              <div className={cn("flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-xs font-bold", connector?.bg ?? "bg-zinc-800", connector?.color ?? "text-zinc-400")}>
+                {connector?.abbr ?? selectedType.slice(0, 2)}
               </div>
               <div>
-                <p className="text-sm font-semibold text-zinc-100 leading-tight">{connector.name}</p>
-                <p className="text-xs text-zinc-500 mt-0.5">{connector.subtitle}</p>
+                <p className="text-sm font-semibold text-zinc-100 leading-tight">{connector?.name ?? selectedType}</p>
+                <p className="text-xs text-zinc-500 mt-0.5">{connector?.subtitle ?? "Tipo de conexión"}</p>
               </div>
             </div>
 
@@ -471,47 +471,49 @@ export function ConnectorModal({ open, onClose, editSource }: Props) {
               <input
                 value={formData.name ?? ""}
                 onChange={e => setFormData(p => ({ ...p, name: e.target.value }))}
-                placeholder={`Mi ${connector.name}`}
+                placeholder="Mi conexión"
                 className={inputCls}
               />
             </FormField>
 
             {/* Dynamic sections */}
-            <div className="flex flex-col gap-4 max-h-[340px] overflow-y-auto pr-0.5">
-              {schema.map(sec => (
-                <div key={sec.section}>
-                  <p className="mb-2.5 text-[10px] font-semibold uppercase tracking-widest text-zinc-600">{sec.section}</p>
-                  <div className="grid grid-cols-2 gap-2">
-                    {sec.fields.map(f => (
-                      <FormField
-                        key={f.key}
-                        label={f.label}
-                        hint={f.hint}
-                        className={f.span === "half" ? "" : "col-span-2"}
-                      >
-                        {f.type === "textarea" ? (
-                          <textarea
-                            value={formData[f.key] ?? ""}
-                            onChange={e => setFormData(p => ({ ...p, [f.key]: e.target.value }))}
-                            placeholder={f.placeholder}
-                            rows={3}
-                            className={cn(inputCls, "resize-none font-mono text-xs")}
-                          />
-                        ) : (
-                          <input
-                            type={f.type ?? "text"}
-                            value={formData[f.key] ?? ""}
-                            onChange={e => setFormData(p => ({ ...p, [f.key]: e.target.value }))}
-                            placeholder={f.placeholder}
-                            className={inputCls}
-                          />
-                        )}
-                      </FormField>
-                    ))}
+            {schema.length > 0 && (
+              <div className="flex flex-col gap-4 max-h-[340px] overflow-y-auto pr-0.5">
+                {schema.map(sec => (
+                  <div key={sec.section}>
+                    <p className="mb-2.5 text-[10px] font-semibold uppercase tracking-widest text-zinc-600">{sec.section}</p>
+                    <div className="grid grid-cols-2 gap-2">
+                      {sec.fields.map(f => (
+                        <FormField
+                          key={f.key}
+                          label={f.label}
+                          hint={f.hint}
+                          className={f.span === "half" ? "" : "col-span-2"}
+                        >
+                          {f.type === "textarea" ? (
+                            <textarea
+                              value={formData[f.key] ?? ""}
+                              onChange={e => setFormData(p => ({ ...p, [f.key]: e.target.value }))}
+                              placeholder={f.placeholder}
+                              rows={3}
+                              className={cn(inputCls, "resize-none font-mono text-xs")}
+                            />
+                          ) : (
+                            <input
+                              type={f.type ?? "text"}
+                              value={formData[f.key] ?? ""}
+                              onChange={e => setFormData(p => ({ ...p, [f.key]: e.target.value }))}
+                              placeholder={f.placeholder}
+                              className={inputCls}
+                            />
+                          )}
+                        </FormField>
+                      ))}
+                    </div>
                   </div>
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
+            )}
 
             {/* Test state */}
             {testState !== "idle" && (

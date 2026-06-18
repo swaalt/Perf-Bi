@@ -3,6 +3,7 @@ import type { DbClient, DbSchema, QueryResult, DataSourceConfig } from "@/types/
 
 export class PostgresClient implements DbClient {
   private client: Client;
+  private connected = false;
 
   constructor(private config: DataSourceConfig) {
     this.client = new Client({
@@ -15,15 +16,20 @@ export class PostgresClient implements DbClient {
     });
   }
 
-  async testConnection(): Promise<void> {
+  private async ensureConnected(): Promise<void> {
+    if (this.connected) return;
     await this.client.connect();
+    this.connected = true;
+  }
+
+  async testConnection(): Promise<void> {
+    await this.ensureConnected();
     await this.client.query("SELECT 1");
   }
 
   async query(sql: string): Promise<QueryResult> {
-    if (!this.client) throw new Error("Not connected");
     const start = Date.now();
-    await this.client.connect().catch(() => {});
+    await this.ensureConnected();
     const result = await this.client.query(sql);
     const columns = result.fields.map((f) => f.name);
     return {
@@ -35,6 +41,7 @@ export class PostgresClient implements DbClient {
   }
 
   async getSchema(): Promise<DbSchema> {
+    await this.ensureConnected();
     const tablesRes = await this.client.query(`
       SELECT table_schema, table_name
       FROM information_schema.tables
@@ -43,38 +50,39 @@ export class PostgresClient implements DbClient {
       ORDER BY table_schema, table_name
     `);
 
-    const tables = await Promise.all(
-      tablesRes.rows.map(async (t) => {
-        const colRes = await this.client.query(
-          `SELECT column_name, data_type, is_nullable
-           FROM information_schema.columns
-           WHERE table_schema = $1 AND table_name = $2
-           ORDER BY ordinal_position`,
-          [t.table_schema, t.table_name]
-        );
-        const countRes = await this.client.query(
-          `SELECT reltuples::bigint AS estimate FROM pg_class
-           JOIN pg_namespace ON pg_namespace.oid = pg_class.relnamespace
-           WHERE relname = $1 AND nspname = $2`,
-          [t.table_name, t.table_schema]
-        );
-        return {
-          name: t.table_name as string,
-          schema: t.table_schema as string,
-          columns: colRes.rows.map((c) => ({
-            name: c.column_name as string,
-            type: c.data_type as string,
-            nullable: c.is_nullable === "YES",
-          })),
-          rowCount: Number(countRes.rows[0]?.estimate ?? 0),
-        };
-      })
-    );
+    const tables: DbSchema["tables"] = []
+    for (const t of tablesRes.rows) {
+      const colRes = await this.client.query(
+        `SELECT column_name, data_type, is_nullable
+         FROM information_schema.columns
+         WHERE table_schema = $1 AND table_name = $2
+         ORDER BY ordinal_position`,
+        [t.table_schema, t.table_name]
+      );
+      const countRes = await this.client.query(
+        `SELECT reltuples::bigint AS estimate FROM pg_class
+         JOIN pg_namespace ON pg_namespace.oid = pg_class.relnamespace
+         WHERE relname = $1 AND nspname = $2`,
+        [t.table_name, t.table_schema]
+      );
+      tables.push({
+        name: t.table_name as string,
+        schema: t.table_schema as string,
+        columns: colRes.rows.map((c) => ({
+          name: c.column_name as string,
+          type: c.data_type as string,
+          nullable: c.is_nullable === "YES",
+        })),
+        rowCount: Number(countRes.rows[0]?.estimate ?? 0),
+      });
+    }
 
     return { tables };
   }
 
   async close(): Promise<void> {
+    if (!this.connected) return;
     await this.client.end();
+    this.connected = false;
   }
 }

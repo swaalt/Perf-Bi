@@ -9,7 +9,6 @@ import Database from "better-sqlite3"
 const schema = z.object({
   sql: z.string().min(1).max(100000),
   dataSourceId: z.string().min(1),
-  allowWrite: z.boolean().default(false),
 })
 
 // Run SQL against a saved dataset using in-memory SQLite
@@ -57,7 +56,12 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: body.error.flatten() }, { status: 400 })
   }
 
-  const { sql, dataSourceId, allowWrite } = body.data
+  const { sql, dataSourceId } = body.data
+
+  const check = isSafeQuery(sql)
+  if (!check.safe) {
+    return NextResponse.json({ error: `Query bloqueado: ${check.reason}` }, { status: 400 })
+  }
 
   // ── Saved dataset path ──
   if (dataSourceId.startsWith("dataset:")) {
@@ -77,13 +81,6 @@ export async function POST(req: NextRequest) {
     if (HTTP_SOURCE_TYPES.has(ds.type)) {
       const result = await executeHttpSource(ds as unknown as DataSourceConfig, sql)
       return NextResponse.json(result)
-    }
-
-    if (!allowWrite) {
-      const check = isSafeQuery(sql)
-      if (!check.safe) {
-        return NextResponse.json({ error: `Query bloqueado: ${check.reason}` }, { status: 400 })
-      }
     }
 
     const client = await getDbClient(dataSourceId)

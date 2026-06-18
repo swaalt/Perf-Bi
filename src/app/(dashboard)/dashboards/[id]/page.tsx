@@ -422,7 +422,7 @@ export default function DashboardBuilderPage() {
     const incoming = importResult.widgets
     if (importMode === "replace") {
       setWidgets(incoming)
-      if (importResult.settings?.bg) setSettings(s => ({ ...s, bg: importResult.settings!.bg! }))
+      if (importResult.settings) setSettings(s => ({ ...s, ...importResult.settings }))
     } else {
       const maxZ = widgets.length > 0 ? Math.max(...widgets.map(w => w.z)) : 0
       setWidgets(prev => [...prev, ...incoming.map((w, i) => ({ ...w, z: maxZ + i + 1 }))])
@@ -816,14 +816,16 @@ export default function DashboardBuilderPage() {
           >
             {/* Background */}
             <div className="absolute inset-0" style={{ background: settings.bg ?? "#09090b" }} />
-            {/* Dot grid */}
-            <div
-              className="pointer-events-none absolute inset-0"
-              style={{
-                backgroundImage: "radial-gradient(circle, rgba(63,63,70,0.45) 1px, transparent 1px)",
-                backgroundSize: "24px 24px",
-              }}
-            />
+            {/* Dot grid — only on default dark bg */}
+            {(settings.bg ?? "#09090b") === "#09090b" && (
+              <div
+                className="pointer-events-none absolute inset-0"
+                style={{
+                  backgroundImage: "radial-gradient(circle, rgba(63,63,70,0.45) 1px, transparent 1px)",
+                  backgroundSize: "24px 24px",
+                }}
+              />
+            )}
 
             {/* Page break guides — no-export so they don't appear in PDF */}
             {pageBreaks.gridLines.map((y, i) => (
@@ -1044,6 +1046,10 @@ interface CanvasWidgetProps {
 function CanvasWidget({ widget: w, data, filterValues, selected, onSelect, onStartDrag, onStartResize, onFilterChange }: CanvasWidgetProps) {
   const isFlat = FLAT.has(w.type)
   const opacity = w.config.opacity != null ? w.config.opacity / 100 : 1
+  const borderColor = (w.config.noBorder || (isFlat && !w.config.borderColor))
+    ? "transparent"
+    : selected ? "rgba(99,102,241,0.55)" : (w.config.borderColor ?? "#27272a")
+  const leftBorderColor = w.config.leftBorderColor
 
   return (
     <div
@@ -1061,9 +1067,10 @@ function CanvasWidget({ widget: w, data, filterValues, selected, onSelect, onSta
         style={{
           borderRadius: w.type === "shape" ? (w.config.shapeRadius ?? 12) : 12,
           background: w.config.bgColor ?? (isFlat ? "transparent" : "#18181b"),
-          border: (w.config.noBorder || (isFlat && !w.config.borderColor))
-            ? "1px solid transparent"
-            : `1px solid ${selected ? "rgba(99,102,241,0.55)" : (w.config.borderColor ?? "#27272a")}`,
+          borderTop: `1px solid ${borderColor}`,
+          borderRight: `1px solid ${borderColor}`,
+          borderBottom: `1px solid ${borderColor}`,
+          borderLeft: leftBorderColor ? `3px solid ${leftBorderColor}` : `1px solid ${borderColor}`,
         }}
         onPointerDown={e => {
           const tag = (e.target as HTMLElement).tagName
@@ -1075,8 +1082,16 @@ function CanvasWidget({ widget: w, data, filterValues, selected, onSelect, onSta
       >
         {/* Title bar for data/chart widgets */}
         {!isFlat && (
-          <div className="flex shrink-0 items-center border-b border-zinc-800/60 px-3 py-1.5 cursor-grab active:cursor-grabbing">
-            <span className="flex-1 truncate text-[11px] font-medium text-zinc-400">{w.title}</span>
+          <div className={cn("flex shrink-0 items-center border-b px-3 py-1.5 cursor-grab active:cursor-grabbing",
+            w.config.bgColor === "#ffffff" || w.config.borderColor === "#d8d0e8"
+              ? "border-[#eae6f1]"
+              : "border-zinc-800/60"
+          )}>
+            <span className={cn("flex-1 truncate text-[11px] font-bold uppercase tracking-[.6px]",
+              w.config.bgColor === "#ffffff" || w.config.borderColor === "#d8d0e8"
+                ? "text-[#5c3d82]"
+                : "text-indigo-400"
+            )}>{w.title}</span>
           </div>
         )}
 

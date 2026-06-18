@@ -220,3 +220,109 @@ body {
     @apply w-full rounded-lg border border-zinc-700 bg-zinc-800 px-3 py-1.5 text-sm text-zinc-100 placeholder:text-zinc-600 focus:border-indigo-500 focus:outline-none transition-colors;
   }
 }
+
+#summary-section {
+  background: linear-gradient(160deg, #3f2a5c 0%, #352350 50%, #5c3d82 100%);
+  border-radius: 14px;
+  padding: 22px 20px;
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+  overflow-y: auto;
+  box-shadow: 0 4px 20px rgba(63, 42, 92, 0.18);
+  color: #fff;
+}
+#summary-section h2 {
+  color: #fff;
+  font-size: 15px;
+  font-weight: 700;
+  margin: 0 0 14px;
+  padding-bottom: 12px;
+  border-bottom: 2px solid rgba(232, 19, 107, 0.3);
+}
+#summary-section p,
+#summary-section li,
+#summary-section ul,
+#summary-section span,
+#summary-section div {
+  color: rgba(255, 255, 255, 0.88);
+  font-size: 14px;
+}
+#summary-detail,
+#summary-report {
+  color: rgba(255, 255, 255, 0.88);
+  font-size: 14px;
+}
+#summary-report {
+  font-size: 17px;
+  line-height: 1.85;
+  white-space: pre-line;
+  font-weight: 400;
+}
+#summary-section::-webkit-scrollbar { width: 4px; }
+#summary-section::-webkit-scrollbar-track { background: transparent; }
+#summary-section::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.2); border-radius: 2px; }
+
+/* Section headers */
+#general-view, #error-view, #distribution-view, #lighthouse-view, #tps-view {
+  background: linear-gradient(135deg, #3f2a5c 0%, #5c3d82 100%);
+  border-radius: 10px;
+  padding: 14px 24px;
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  box-shadow: 0 2px 8px rgba(63, 42, 92, 0.12);
+}
+#general-view h2, #error-view h2, #distribution-view h2, #lighthouse-view h2, #tps-view h2 {
+  color: #fff;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1.2px;
+  margin: 0;
+}
+
+/* Scenario section (inside transparent panel) */
+#scenario-section {
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(74, 52, 102, 0.25);
+}
+#scenario-section h3 {
+  color: #3f2a5c;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin: 0 0 8px;
+}
+#scenario-section ul {
+  margin: 0;
+  padding-left: 0;
+  list-style: none;
+}
+#scenario-section li {
+  font-size: 12.5px;
+  color: #55556e;
+  margin: 4px 0;
+}
+#scenario-section li strong {
+  color: #3f2a5c;
+  font-weight: 600;
+}
+
+/* Transparent panel title */
+#transparent h2 {
+  color: #3f2a5c;
+  font-size: 17px;
+  font-weight: 700;
+  margin: 0 0 6px;
+}
+#time-dashboard-text {
+  color: #55556e;
+  font-size: 12px;
+  font-style: italic;
+  margin: 0;
+}

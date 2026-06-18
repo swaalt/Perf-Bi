@@ -32,7 +32,7 @@ export async function POST(req: NextRequest) {
   if (!body.success) {
     return NextResponse.json({ error: body.error.flatten() }, { status: 400 })
   }
-  const source = await prisma.dataSource.create({ data: body.data })
+  const source = await prisma.dataSource.create({ data: { ...body.data, type: body.data.type.toUpperCase() } })
   const { password: _, ...safe } = source
   return NextResponse.json(safe, { status: 201 })
 }

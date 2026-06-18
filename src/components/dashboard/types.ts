@@ -110,6 +110,7 @@ export interface WidgetConfig {
   bgColor?: string
   noBorder?: boolean
   borderColor?: string
+  leftBorderColor?: string    // 3px left border accent (from Superset border-left)
   opacity?: number
 
   // AI-generated static data (used as fallback when no live query is connected)

@@ -1,4 +1,4 @@
-import type { Widget, WidgetType, AccentColor } from "@/components/dashboard/types"
+import type { Widget, WidgetType, AccentColor, DashboardSettings } from "@/components/dashboard/types"
 import { defaultWidget, migrateWidget } from "@/components/dashboard/types"
 
 export type ImportFormat = "perf-bi" | "superset" | "metabase" | "pbix" | "unknown"
@@ -13,7 +13,7 @@ export interface ImportDataSource {
 export interface ImportResult {
   format: ImportFormat
   widgets: Widget[]
-  settings?: { bg?: string }
+  settings?: DashboardSettings
   title?: string
   warning?: string
   dataSources?: ImportDataSource[]
@@ -42,11 +42,49 @@ function supersetType(vizType: string): WidgetType {
   return m[vizType] ?? "bar"
 }
 
-// Converts Superset meta.background → CSS color string or null
+const CSS_NAMED_COLORS = new Set([
+  "aliceblue","antiquewhite","aqua","aquamarine","azure","beige","bisque","black","blanchedalmond",
+  "blue","blueviolet","brown","burlywood","cadetblue","chartreuse","chocolate","coral","cornflowerblue",
+  "cornsilk","crimson","cyan","darkblue","darkcyan","darkgoldenrod","darkgray","darkgreen","darkgrey",
+  "darkkhaki","darkmagenta","darkolivegreen","darkorange","darkorchid","darkred","darksalmon",
+  "darkseagreen","darkslateblue","darkslategray","darkslategrey","darkturquoise","darkviolet",
+  "deeppink","deepskyblue","dimgray","dimgrey","dodgerblue","firebrick","floralwhite","forestgreen",
+  "fuchsia","gainsboro","ghostwhite","gold","goldenrod","gray","green","greenyellow","grey",
+  "honeydew","hotpink","indianred","indigo","ivory","khaki","lavender","lavenderblush","lawngreen",
+  "lemonchiffon","lightblue","lightcoral","lightcyan","lightgoldenrodyellow","lightgray","lightgreen",
+  "lightgrey","lightpink","lightsalmon","lightseagreen","lightskyblue","lightslategray","lightslategrey",
+  "lightsteelblue","lightyellow","lime","limegreen","linen","magenta","maroon","mediumaquamarine",
+  "mediumblue","mediumorchid","mediumpurple","mediumseagreen","mediumslateblue","mediumspringgreen",
+  "mediumturquoise","mediumvioletred","midnightblue","mintcream","mistyrose","moccasin","navajowhite",
+  "navy","oldlace","olive","olivedrab","orange","orangered","orchid","palegoldenrod","palegreen",
+  "paleturquoise","palevioletred","papayawhip","peachpuff","peru","pink","plum","powderblue","purple",
+  "rebeccapurple","red","rosybrown","royalblue","saddlebrown","salmon","sandybrown","seagreen",
+  "seashell","sienna","silver","skyblue","slateblue","slategray","slategrey","snow","springgreen",
+  "steelblue","tan","teal","thistle","tomato","turquoise","violet","wheat","white","whitesmoke",
+  "yellow","yellowgreen",
+])
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function resolveNodeBg(n: Record<string, any>, meta: Record<string, any>): string | null {
+  // Try multiple places Superset can store background:
+  // 1. meta.background / meta.background_color
+  // 2. n.background / n.background_color (directly on node)
+  return parseSupersetBg(meta.background)
+    ?? parseSupersetBg(meta.background_color)
+    ?? parseSupersetBg(n.background)
+    ?? parseSupersetBg(n.background_color)
+}
+
+// Converts Superset background value → CSS color string or null
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function parseSupersetBg(bg: any): string | null {
   if (!bg || bg === "BACKGROUND_TRANSPARENT") return null
-  if (typeof bg === "string") return bg.startsWith("#") || bg.startsWith("rgb") ? bg : null
+  if (typeof bg === "string") {
+    const t = bg.trim()
+    if (t.startsWith("#") || t.startsWith("rgb")) return t
+    if (CSS_NAMED_COLORS.has(t.toLowerCase())) return t
+    return null
+  }
   if (typeof bg === "object" && bg.r !== undefined) {
     return `rgba(${bg.r},${bg.g ?? 0},${bg.b ?? 0},${bg.a ?? 1})`
   }
@@ -163,6 +201,87 @@ function isValidColor(c: string): boolean {
     !["transparent", "initial", "unset", "revert"].includes(c.toLowerCase())
 }
 
+// ── CSS variable resolution ────────────────────────────────────────────────────
+
+function parseCssVars(css: string): Map<string, string> {
+  const vars = new Map<string, string>()
+  const rootMatch = css.match(/:root\s*\{([\s\S]*?)\}/)
+  if (!rootMatch) return vars
+  const re = /--([\w-]+)\s*:\s*([^;}\n]+)/g
+  let m
+  while ((m = re.exec(rootMatch[1])) !== null) {
+    vars.set(`--${m[1]}`, m[2].trim())
+  }
+  return vars
+}
+
+function resolveCssValue(value: string, vars: Map<string, string>): string {
+  return value.replace(/var\(\s*(--[\w-]+)\s*\)/g, (_, name) => vars.get(name) ?? "")
+}
+
+function extractIdBackgrounds(css: string, vars: Map<string, string>): Map<string, string> {
+  const results = new Map<string, string>()
+  // Match ANY CSS rule containing #user-content-XXX in its selector AND a background property
+  const ruleRe = /([^}]*#user-content-[\w-]+[^}]*)\{([^}]*)\}/gi
+  let m
+  while ((m = ruleRe.exec(css)) !== null) {
+    const valBlock = m[2]
+    const bgMatch = valBlock.match(/(?:background|background-color)\s*:\s*([^;}\n]+)/i)
+    if (!bgMatch) continue
+    const rawValue = bgMatch[1].trim().replace(/!important\s*$/, "").trim()
+    const resolved = resolveCssValue(rawValue, vars)
+    if (!resolved || ["transparent", "initial", "unset", "revert"].includes(resolved.toLowerCase())) continue
+    const idRe = /#(user-content-[\w-]+)/g
+    let idMatch
+    while ((idMatch = idRe.exec(m[1])) !== null) {
+      results.set(idMatch[1], resolved)
+    }
+  }
+  return results
+}
+
+interface ChartCssStyle {
+  borderLeft?: string
+  kpiColor?: string
+}
+
+function extractChartStyles(css: string, vars: Map<string, string>): Map<number, ChartCssStyle> {
+  const results = new Map<number, ChartCssStyle>()
+  if (!css) return results
+  const re = /\.dashboard-chart-id-(\d+)[^{]*\{([^}]*)\}/gi
+  let m
+  while ((m = re.exec(css)) !== null) {
+    const chartId = parseInt(m[1])
+    const block = m[2]
+    const prev = results.get(chartId) ?? {}
+    // border-left
+    const bl = block.match(/border-left\s*:\s*([^;}\n]+)/i)
+    if (bl) {
+      const resolved = resolveCssValue(bl[1].trim(), vars).replace(/!important\s*$/, "").trim()
+      if (resolved && !resolved.includes("var(")) prev.borderLeft = resolved
+    }
+    // color in the block (likely .header-line for KPIs)
+    const cl = block.match(/\bcolor\s*:\s*([^;}\n]+)/i)
+    if (cl) {
+      const resolved = resolveCssValue(cl[1].trim(), vars).replace(/!important\s*$/, "").trim()
+      if (resolved && !resolved.includes("var(")) prev.kpiColor = resolved
+    }
+    results.set(chartId, prev)
+  }
+  return results
+}
+
+const CSS_COLOR_TO_ACCENT: Record<string, AccentColor> = {
+  "#5c3d82": "violet",
+  "#e8136b": "rose",
+  "#0d9f6e": "emerald",
+  "#4a8fe7": "sky",
+}
+
+function hexToAccent(hex: string): AccentColor | undefined {
+  return CSS_COLOR_TO_ACCENT[hex.toLowerCase()]
+}
+
 // ── Jinja SQL cleanup ─────────────────────────────────────────────────────────
 
 function cleanJinjaSql(sql: string): string {
@@ -271,6 +390,7 @@ function supersetLayoutToWidgets(
   position: Record<string, any>,
   chartsMap: Map<string, ChartInfo>,
   canvasW: number,
+  css?: string,
 ): Widget[] {
   const widgets: Widget[] = []
   const COL_W = canvasW / 12
@@ -278,6 +398,11 @@ function supersetLayoutToWidgets(
   const PAD = 4
   const GAP = 8
   let chartColorIdx = 0  // sequential accent color per chart widget
+
+  const cssVars = css ? parseCssVars(css) : new Map()
+  const idBgs = css ? extractIdBackgrounds(css, cssVars) : new Map()
+  const chartStyles = css ? extractChartStyles(css, cssVars) : new Map()
+  const cardBg = cssVars.get('--card')
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   function node(id: string): any { return position[id] }
@@ -316,6 +441,29 @@ function supersetLayoutToWidgets(
           ww.config.imageUrl = info.imageUrl
           ww.config.imageFit = "contain"
         }
+        // Apply card background from Superset CSS (e.g. --card: #ffffff)
+        if (cardBg && !ww.config.bgColor) ww.config.bgColor = cardBg
+
+        // Apply chart-specific styles from CSS (border-left, KPI value color)
+        const cId = Number(meta.chartId ?? meta.sliceId ?? 0)
+        const cs = chartStyles.get(cId)
+        if (cs) {
+          if (cs.borderLeft) {
+            const colorMatch = cs.borderLeft.match(/#[0-9a-fA-F]{3,8}|rgba?\([^)]+\)|hsla?\([^)]+\)/)
+            if (colorMatch) {
+              ww.config.leftBorderColor = colorMatch[0]
+            }
+          }
+          if (cs.kpiColor) {
+            const accent = hexToAccent(cs.kpiColor)
+            if (accent) ww.config.color = accent
+          }
+        }
+        // Set light border when card background is white (Superset template style)
+        if (cardBg === "#ffffff" && !ww.config.borderColor) {
+          ww.config.borderColor = "#d8d0e8"
+        }
+
         widgets.push(ww)
         return nodeH + GAP
       }
@@ -332,6 +480,23 @@ function supersetLayoutToWidgets(
         ww.config.text = raw
         ww.config.isHtml = containsHtml
         ww.config.noBorder = true
+
+        // Check if this markdown has an id matching a CSS background rule
+        const idMatch = raw.match(/id="([^"]+)"/)
+        if (idMatch) {
+          const cssId = `user-content-${idMatch[1]}`
+          const bg = idBgs.get(cssId)
+          if (bg) {
+            const shape = makeWidget("shape", x, y, nodeW, estH, "")
+            shape.config.bgColor = bg
+            shape.config.noBorder = true
+            shape.config.shapeRadius = 0
+            shape.z = Math.max(0, ww.z - 1)
+            widgets.splice(widgets.length - 1, 0, shape)
+            ww.config.textColor = "#ffffff"
+          }
+        }
+
         widgets.push(ww)
         return estH + GAP
       }
@@ -356,7 +521,7 @@ function supersetLayoutToWidgets(
 
       case "ROW": {
         // Children placed side-by-side; each advances x by its own meta.width
-        const rowBg = parseSupersetBg(meta.background)
+        const rowBg = resolveNodeBg(n, meta)
         let cX = x
         let maxH = 0
         for (const childId of (n.children ?? [])) {
@@ -380,7 +545,7 @@ function supersetLayoutToWidgets(
 
       case "COLUMN": {
         // Children stacked vertically within this column's x position
-        const colBg = parseSupersetBg(meta.background)
+        const colBg = resolveNodeBg(n, meta)
         const firstChildIdx = widgets.length
         let cY = y
         for (const childId of (n.children ?? [])) {
@@ -455,8 +620,12 @@ function parseSuperset(json: any, canvasW: number): ImportResult {
   resetZ()
 
   if (position) {
-    const widgets = supersetLayoutToWidgets(position, chartsMap, canvasW)
-    if (widgets.length > 0) return { format: "superset", widgets, title }
+    const css: string = dash?.css ?? ""
+    const widgets = supersetLayoutToWidgets(position, chartsMap, canvasW, css)
+    if (widgets.length > 0) {
+      const canvasBg = extractBackground(css) ?? dash?.background_color ?? null
+      return { format: "superset", widgets, title, settings: canvasBg ? { bg: canvasBg } : undefined }
+    }
   }
 
   if (slicesArr.length > 0) {
@@ -636,9 +805,9 @@ async function parseSupersetZip(file: File, canvasW: number): Promise<ImportResu
     dashKeys[0].replace(`${prefix}dashboards/`, "").replace(/\.yaml$/i, "").replace(/_/g, " ") ??
     "Superset Dashboard"
 
-  // Extract canvas background from CSS
+  // Extract canvas background from CSS or direct background_color
   const css: string = dash?.css ?? ""
-  const canvasBg = extractBackground(css)
+  const canvasBg = extractBackground(css) ?? dash?.background_color ?? null
 
   const position = dash?.position
   if (!position || typeof position !== "object") {
@@ -650,6 +819,7 @@ async function parseSupersetZip(file: File, canvasW: number): Promise<ImportResu
     position as Record<string, unknown>,
     chartsMap,
     canvasW,
+    css,
   )
 
   if (widgets.length === 0) {

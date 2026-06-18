@@ -17,13 +17,14 @@ export async function POST(
   const config = ds as unknown as DataSourceConfig
 
   try {
-    if (HTTP_SOURCE_TYPES.has(ds.type)) {
+    const type = ds.type.toUpperCase()
+    if (HTTP_SOURCE_TYPES.has(type)) {
       await testHttpSource(config)
       return NextResponse.json({ ok: true })
     }
 
     let client
-    switch (ds.type) {
+    switch (type) {
       case "POSTGRESQL":
       case "REDSHIFT":
         client = new PostgresClient(config); break
@@ -33,7 +34,7 @@ export async function POST(
       case "SQLITE":
         client = new SqliteClient(config); break
       default:
-        return NextResponse.json({ error: "Tipo no soportado" }, { status: 400 })
+        return NextResponse.json({ error: `Tipo no soportado para test: "${ds.type}"` }, { status: 400 })
     }
 
     await client.testConnection()

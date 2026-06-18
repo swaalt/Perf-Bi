@@ -477,7 +477,7 @@ export function WidgetPreview({ widget: w, data, filterValues, onFilterChange }:
     return (
       <div
         className="flex h-full w-full items-center justify-center"
-        style={{ borderRadius: cfg.shapeRadius ?? 12 }}
+        style={{ borderRadius: cfg.shapeRadius ?? 12, background: cfg.bgColor }}
       >
         {cfg.shapeLabel && (
           <span className="text-sm font-semibold" style={{ color: cfg.textColor ?? "#71717a" }}>

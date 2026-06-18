@@ -1,9 +1,10 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { Plus, Database, Globe, Trash2, Zap } from "lucide-react"
+import { Plus, Database, Globe, Pencil, Trash2, Zap } from "lucide-react"
 import { ConnectorModal } from "@/components/data-sources/connector-modal"
 import { useConnectionsStore } from "@/stores/connections"
+import type { DataSource } from "@/stores/connections"
 import { cn } from "@/lib/utils"
 import Link from "next/link"
 
@@ -31,6 +32,7 @@ const HTTP_TYPES = new Set(["REST_API","GOOGLE_SHEETS","AIRTABLE","NOTION","JIRA
 
 export default function ConnectorsPage() {
   const [modalOpen, setModalOpen] = useState(false)
+  const [editSource, setEditSource] = useState<DataSource | null>(null)
   const { sources, setSources, removeSource } = useConnectionsStore()
 
   useEffect(() => {
@@ -55,7 +57,7 @@ export default function ConnectorsPage() {
           </p>
         </div>
         <button
-          onClick={() => setModalOpen(true)}
+          onClick={() => { setEditSource(null); setModalOpen(true) }}
           className="inline-flex items-center gap-1.5 rounded-lg bg-indigo-500 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-indigo-600"
         >
           <Plus className="h-4 w-4" />
@@ -73,7 +75,7 @@ export default function ConnectorsPage() {
             Agrega tu primera fuente de datos para comenzar
           </p>
           <button
-            onClick={() => setModalOpen(true)}
+            onClick={() => { setEditSource(null); setModalOpen(true) }}
             className="mt-4 inline-flex items-center gap-1.5 rounded-lg bg-indigo-500 px-4 py-2 text-xs font-medium text-white transition-colors hover:bg-indigo-600"
           >
             <Plus className="h-3.5 w-3.5" /> Agregar conexión
@@ -99,12 +101,20 @@ export default function ConnectorsPage() {
                       <p className="text-xs text-zinc-500">{meta.label}</p>
                     </div>
                   </div>
-                  <button
-                    onClick={() => handleDelete(src.id)}
-                    className="opacity-0 transition-opacity group-hover:opacity-100 rounded-md p-1 text-zinc-600 hover:bg-zinc-800 hover:text-red-400"
-                  >
-                    <Trash2 className="h-3.5 w-3.5" />
-                  </button>
+                  <div className="flex gap-1">
+                    <button
+                      onClick={() => { setEditSource(src); setModalOpen(true) }}
+                      className="opacity-0 transition-opacity group-hover:opacity-100 rounded-md p-1 text-zinc-600 hover:bg-zinc-800 hover:text-indigo-400"
+                    >
+                      <Pencil className="h-3.5 w-3.5" />
+                    </button>
+                    <button
+                      onClick={() => handleDelete(src.id)}
+                      className="opacity-0 transition-opacity group-hover:opacity-100 rounded-md p-1 text-zinc-600 hover:bg-zinc-800 hover:text-red-400"
+                    >
+                      <Trash2 className="h-3.5 w-3.5" />
+                    </button>
+                  </div>
                 </div>
 
                 <div className="flex flex-col gap-0.5 text-xs text-zinc-600">
@@ -134,7 +144,7 @@ export default function ConnectorsPage() {
         </div>
       )}
 
-      <ConnectorModal open={modalOpen} onClose={() => setModalOpen(false)} />
+      <ConnectorModal key={editSource?.id ?? "new"} open={modalOpen} onClose={() => { setModalOpen(false); setEditSource(null) }} editSource={editSource ?? undefined} />
     </div>
   )
 }

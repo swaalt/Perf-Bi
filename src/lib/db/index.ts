@@ -17,8 +17,9 @@ export async function getDbClient(dataSourceId: string): Promise<DbClient> {
     throw new Error("HTTP_SOURCE — use executeHttpSource() instead")
   }
 
+  const type = ds.type.toUpperCase()
   let client: DbClient
-  switch (ds.type) {
+  switch (type) {
     case "POSTGRESQL":
     case "REDSHIFT":
       client = new PostgresClient(config); break
@@ -43,13 +44,13 @@ export function invalidateClient(dataSourceId: string) {
   }
 }
 
-const DANGEROUS_RE = /^\s*(DROP|TRUNCATE|DELETE\s+FROM|INSERT\s+INTO|UPDATE\s+\w|CREATE\s+(OR\s+REPLACE\s+)?TABLE|ALTER\s+TABLE|GRANT|REVOKE)/i
+const WRITE_RE = /^\s*(DROP|TRUNCATE|DELETE\s+FROM|INSERT\s+(INTO|IGNORE|INTO\s+IGNORE)|UPDATE\s+\w|REPLACE\s+(INTO\s+)?|MERGE\s+(INTO\s+)?|CALL\s+|EXEC\w*\s+|LOAD\s+(DATA|FILE)|SELECT\s+.*\s+INTO\s+(OUTFILE|DUMPFILE)|RENAME\s+(TABLE|DATABASE|SCHEMA)|ALTER\s+|CREATE\s+(OR\s+REPLACE\s+)?(TABLE|DATABASE|SCHEMA|INDEX|VIEW|TRIGGER|FUNCTION|PROCEDURE|EVENT|TEMPORARY|UNIQUE)|LOCK\s+(TABLES|TABLE)|UNLOCK\s+(TABLES|TABLE)|GRANT\s+|REVOKE\s+|SET\s+|KILL\s+|SHUTDOWN|FLUSH\s+|RESET\s+|PURGE\s+|CHANGE\s+|OPTIMIZE\s+|REPAIR\s+|ANALYZE\s+|CHECK\s+|CACHE\s+|IMPORT\s+|EXPORT\s+|BACKUP\s+|RESTORE\s+)/i
 
 export function isSafeQuery(sql: string): { safe: boolean; reason?: string } {
   const statements = sql.split(";").map((s) => s.trim()).filter(Boolean)
   for (const stmt of statements) {
-    if (DANGEROUS_RE.test(stmt)) {
-      return { safe: false, reason: `Statement potencialmente destructivo: "${stmt.slice(0, 60)}..."` }
+    if (WRITE_RE.test(stmt)) {
+      return { safe: false, reason: `Operación de escritura bloqueada: "${stmt.slice(0, 80)}..."` }
     }
   }
   return { safe: true }

@@ -49,31 +49,30 @@ export class MySqlClient implements DbClient {
       [dbName]
     );
 
-    const tables = await Promise.all(
-      tablesRows.map(async (t) => {
-        const [cols] = await conn.query<mysql.RowDataPacket[]>(
-          `SELECT COLUMN_NAME, DATA_TYPE, IS_NULLABLE
-           FROM information_schema.COLUMNS
-           WHERE TABLE_SCHEMA = ? AND TABLE_NAME = ?
-           ORDER BY ORDINAL_POSITION`,
-          [dbName, t.TABLE_NAME]
-        );
-        const [countRows] = await conn.query<mysql.RowDataPacket[]>(
-          `SELECT TABLE_ROWS FROM information_schema.TABLES
-           WHERE TABLE_SCHEMA = ? AND TABLE_NAME = ?`,
-          [dbName, t.TABLE_NAME]
-        );
-        return {
-          name: t.TABLE_NAME as string,
-          columns: cols.map((c) => ({
-            name: c.COLUMN_NAME as string,
-            type: c.DATA_TYPE as string,
-            nullable: c.IS_NULLABLE === "YES",
-          })),
-          rowCount: Number(countRows[0]?.TABLE_ROWS ?? 0),
-        };
-      })
-    );
+    const tables: DbSchema["tables"] = []
+    for (const t of tablesRows) {
+      const [cols] = await conn.query<mysql.RowDataPacket[]>(
+        `SELECT COLUMN_NAME, DATA_TYPE, IS_NULLABLE
+         FROM information_schema.COLUMNS
+         WHERE TABLE_SCHEMA = ? AND TABLE_NAME = ?
+         ORDER BY ORDINAL_POSITION`,
+        [dbName, t.TABLE_NAME]
+      );
+      const [countRows] = await conn.query<mysql.RowDataPacket[]>(
+        `SELECT TABLE_ROWS FROM information_schema.TABLES
+         WHERE TABLE_SCHEMA = ? AND TABLE_NAME = ?`,
+        [dbName, t.TABLE_NAME]
+      );
+      tables.push({
+        name: t.TABLE_NAME as string,
+        columns: cols.map((c) => ({
+          name: c.COLUMN_NAME as string,
+          type: c.DATA_TYPE as string,
+          nullable: c.IS_NULLABLE === "YES",
+        })),
+        rowCount: Number(countRows[0]?.TABLE_ROWS ?? 0),
+      });
+    }
 
     return { tables };
   }
